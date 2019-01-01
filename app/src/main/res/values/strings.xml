@@ -20,6 +20,10 @@
     <string name="nav_header_title">未登录</string>
     <string name="nav_header_subtitle">登录以查看更多！</string>
 
+    <string name="post_label_hot">热点</string>
+    <string name="post_label_life">生活</string>
+    <string name="post_label_study">学习</string>
+
     <string name="drawer_menu_post">我的帖子</string>
     <string name="drawer_menu_draft">我的草稿</string>
     <string name="drawer_menu_care">我的关注</string>

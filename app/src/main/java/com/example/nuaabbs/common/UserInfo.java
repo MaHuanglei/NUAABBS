@@ -1,5 +1,7 @@
 package com.example.nuaabbs.common;
 
+import com.example.nuaabbs.util.LogUtil;
+
 import java.sql.Date;
 
 public class UserInfo {
@@ -23,7 +25,7 @@ public class UserInfo {
         LogUtil.d("UserInfo", "userName = " + this.userName);
         LogUtil.d("UserInfo", "password = " + this.password);
 
-        if(this.schoolID == null) this.schoolID = "null";
+        if(this.schoolID == null) LogUtil.d("UserInfo", "schoolID = ");
         LogUtil.d("UserInfo", "schoolID = " + this.schoolID);
 
         LogUtil.d("UserInfo", "headPortrait = " + this.headPortrait);
@@ -65,6 +67,8 @@ public class UserInfo {
     }
 
     public String getSchoolID() {
+        if(this.schoolID == null)
+            return "";
         return schoolID;
     }
 
@@ -86,6 +90,12 @@ public class UserInfo {
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    public boolean isBirthdayEffect(){
+        if(this.birthday == null)
+            return false;
+        else return true;
     }
 
     public Date getBirthday() {

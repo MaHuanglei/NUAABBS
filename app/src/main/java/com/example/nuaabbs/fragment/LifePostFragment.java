@@ -1,9 +1,6 @@
 package com.example.nuaabbs.fragment;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class HotPostFragment extends BaseFragment {
-
+public class LifePostFragment extends BaseFragment {
     private Post[] posts = {new Post("刘洋",""),new Post("马黄雷", ""),
             new Post("左安发",""),new Post("董伟良", ""),
             new Post("卢泽普",""),new Post("石一泽", ""),
@@ -29,17 +25,17 @@ public class HotPostFragment extends BaseFragment {
 
     private PostAdapter postAdapter;
 
-    public HotPostFragment() {
+    public LifePostFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hot_post, container, false);
+        View view = inflater.inflate(R.layout.fragment_life_post, container, false);
 
         initPosts();
-        RecyclerView recyclerView = view.findViewById(R.id.hot_list);
+        RecyclerView recyclerView = view.findViewById(R.id.life_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         postAdapter = new PostAdapter(postList);

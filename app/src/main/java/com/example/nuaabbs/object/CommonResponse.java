@@ -1,4 +1,4 @@
-package com.example.nuaabbs.common;
+package com.example.nuaabbs.object;
 
 public class CommonResponse {
     String resCode;

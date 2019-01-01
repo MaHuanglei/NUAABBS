@@ -1,7 +1,15 @@
 package com.example.nuaabbs;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,11 +29,23 @@ import com.example.nuaabbs.action.MyCareActivity;
 import com.example.nuaabbs.action.MyCollectActivity;
 import com.example.nuaabbs.action.MyDraftActivity;
 import com.example.nuaabbs.action.MyPostActivity;
+import com.example.nuaabbs.action.PersonalPageActivity;
 import com.example.nuaabbs.action.SearchActivity;
 import com.example.nuaabbs.action.SystemSettingActivity;
-import com.example.nuaabbs.action.UserDetailActivity;
+import com.example.nuaabbs.adapter.MyPageFragmentAdapter;
 import com.example.nuaabbs.asyncNetTask.LogoutTask;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.fragment.BaseFragment;
+import com.example.nuaabbs.fragment.HotPostFragment;
+import com.example.nuaabbs.fragment.LifePostFragment;
+import com.example.nuaabbs.fragment.StudyPostFragment;
+import com.example.nuaabbs.object.ZoomOutPageTransformer;
+import com.example.nuaabbs.util.LogUtil;
+
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
@@ -36,6 +56,12 @@ public class MainActivity extends BaseActivity
 
     NavigationView navigationView;
     Menu menu;
+
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private String[] mTitle = {"热点","生活","生活"};
+    private List<BaseFragment> mFragmentList = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +90,32 @@ public class MainActivity extends BaseActivity
         loginStateTextView.setOnClickListener(this);
         idiograph = headerView.findViewById(R.id.idiograph);
         idiograph.setOnClickListener(this);
+
+        initData();
+        mTabLayout = findViewById(R.id.post_tab);
+        if(mTabLayout == null){
+            LogUtil.e("MainActivity", "tabLayout = null");
+        }
+
+
+        mViewPager = findViewById(R.id.post_pager);
+        MyPageFragmentAdapter mAdapter =
+                new MyPageFragmentAdapter(getSupportFragmentManager(), mFragmentList, mTitle);
+
+        mViewPager.setAdapter(mAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+        mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+
+    }
+
+    private void initData()
+    {
+        HotPostFragment hotPostFragment = new HotPostFragment();
+        LifePostFragment lifePostFragment = new LifePostFragment();
+        StudyPostFragment studyPostFragment = new StudyPostFragment();
+        mFragmentList.add(hotPostFragment);
+        mFragmentList.add(lifePostFragment);
+        mFragmentList.add(studyPostFragment);
     }
 
     @Override
@@ -144,7 +196,7 @@ public class MainActivity extends BaseActivity
             case R.id.loginState:
             case R.id.idiograph:
                 if(MyApplication.loginState){
-                    UserDetailActivity.actionStart(MainActivity.this);
+                    PersonalPageActivity.actionStart(MainActivity.this);
                 }else{
                     LoginActivity.actionStart(MainActivity.this);
                 }
