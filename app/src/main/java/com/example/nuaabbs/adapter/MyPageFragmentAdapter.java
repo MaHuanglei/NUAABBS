@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.nuaabbs.fragment.BaseFragment;
+import com.example.nuaabbs.util.LogUtil;
 
 import java.util.List;
 
@@ -30,6 +31,8 @@ public class MyPageFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return titles[position]; // 在这里返回每个tab的名字
+        String tmp = titles[position];
+        LogUtil.d("MainActivity TabLayout", position + "  " + tmp);
+        return tmp; // 在这里返回每个tab的名字
     }
 }

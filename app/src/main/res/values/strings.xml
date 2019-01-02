@@ -5,6 +5,7 @@
     <string name="register_act_title">注册</string>
     <string name="system_setting_act_title">设置</string>
     <string name="user_detail_act_title">详细信息</string>
+    <string name="change_user_detail_act_title">修改信息</string>
     <string name="search_act_title">搜索</string>
     <string name="create_post_act_title">创建</string>
     <string name="my_post_act_title">我的帖子</string>

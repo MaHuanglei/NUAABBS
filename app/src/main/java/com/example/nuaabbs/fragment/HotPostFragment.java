@@ -20,10 +20,8 @@ import java.util.Random;
 
 public class HotPostFragment extends BaseFragment {
 
-    private Post[] posts = {new Post("刘洋",""),new Post("马黄雷", ""),
-            new Post("左安发",""),new Post("董伟良", ""),
-            new Post("卢泽普",""),new Post("石一泽", ""),
-            new Post("刘爱媛",""),new Post("潘贵", "")};
+    private Post[] posts = {new Post(),new Post(),new Post(),new Post(),
+            new Post(),new Post(),new Post(),new Post()};
 
     private List<Post> postList = new ArrayList<>();
 
@@ -42,19 +40,12 @@ public class HotPostFragment extends BaseFragment {
         RecyclerView recyclerView = view.findViewById(R.id.hot_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        postAdapter = new PostAdapter(postList);
+        postAdapter = new PostAdapter(getContext(),postList);
         recyclerView.setAdapter(postAdapter);
         return view;
     }
 
     private void initPosts(){
-        for(int i=0;i<posts.length;++i)
-            posts[i].setPostInfo("学习使我快乐！学习使我快乐！学习使我快乐！学习使我快乐！"
-                    + "学习使我快乐！学习使我快乐！学习使我快乐！学习使我快乐！学习使我快乐！"
-                    + "学习使我快乐！学习使我快乐！学习使我快乐！学习使我快乐！学习使我快乐！"
-                    + "学习使我快乐！学习使我快乐！学习使我快乐！学习使我快乐！学习使我快乐！"
-                    + "学习使我快乐！学习使我快乐！学习使我快乐！学习使我快乐！学习使我快乐！");
-
         postList.clear();
         for (int i = 0; i < 50; i++) {
             Random random = new Random();

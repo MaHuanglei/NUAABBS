@@ -9,6 +9,8 @@ public class Constant {
     public static String URL_Login = URL + "login";
     public static String URL_Register = URL + "register";
     public static String URL_Logout = URL + "logout";
+    public static String URL_UpdateUserDetail = URL + "updateUserDetail";
+    public static String URL_CreateNewPost = URL + "createNewPost";
 
     // charset of connection with server
     public static String CONNECT_CHARSET = "application/json; charset=utf-8";
@@ -17,6 +19,7 @@ public class Constant {
     public static String RESCODE_SUCCESS = "100";
     public static String RESCODE_PASSWORD_FALSE = "200";
     public static String RESCODE_REGISTERED = "201";
+    public static String RESCODE_SQLEXCEPTION = "202";
     public static String RESCODE_NET_FAIL = "400";
     public static String RESCODE_NET_TIMEOUT = "500";
 
@@ -32,6 +35,9 @@ public class Constant {
     // 自定义日志标题
     public static String APP_LOG_TAG = "NUAA-BBS";
     public static String OKHTTP_TAG = " OkHttp";
+
+    // default date
+    public static long dataDefault = 946703833254l;
 
     public static Gson gson = new Gson();
 }

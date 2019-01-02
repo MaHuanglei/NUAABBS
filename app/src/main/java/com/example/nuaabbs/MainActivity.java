@@ -1,14 +1,8 @@
 package com.example.nuaabbs;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -42,8 +36,6 @@ import com.example.nuaabbs.fragment.StudyPostFragment;
 import com.example.nuaabbs.object.ZoomOutPageTransformer;
 import com.example.nuaabbs.util.LogUtil;
 
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +51,7 @@ public class MainActivity extends BaseActivity
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
-    private String[] mTitle = {"热点","生活","生活"};
+    private String[] mTitle = {"热点","生活","学习"};
     private List<BaseFragment> mFragmentList = new ArrayList<>();
 
 
@@ -105,7 +97,6 @@ public class MainActivity extends BaseActivity
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-
     }
 
     private void initData()

@@ -106,6 +106,12 @@ public class UserInfo {
         this.birthday = birthday;
     }
 
+    public void setBirthday(int year, int month, int day) {
+        this.birthday.setYear(year - 1900);
+        this.birthday.setMonth(month);
+        this.birthday.setDate(day);
+    }
+
     public String getIdioGraph() {
         return idioGraph;
     }

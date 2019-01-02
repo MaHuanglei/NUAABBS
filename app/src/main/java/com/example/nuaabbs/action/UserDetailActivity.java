@@ -5,13 +5,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.util.LogUtil;
 
-public class UserDetailActivity extends BaseActivity {
+public class UserDetailActivity extends BaseActivity implements View.OnClickListener{
+
+    TextView userName;
+    TextView userSchoolID;
+    TextView userSex;
+    TextView userBirthday;
+    TextView userIdiograph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,32 +29,32 @@ public class UserDetailActivity extends BaseActivity {
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
-            LogUtil.d("UserDetailActivity", "actionBar != null");
-        }else{
-            LogUtil.d("UserDetailActivity", "actionBar = null");
         }
 
-        TextView userName = findViewById(R.id.detail_user_name);
-        userName.setText(MyApplication.userInfo.getUserName());
+        userName = findViewById(R.id.detail_user_name);
+        userSchoolID = findViewById(R.id.detail_user_schoolID);
+        userSex = findViewById(R.id.detail_user_sex);
+        userBirthday = findViewById(R.id.detail_user_birthday);
+        userIdiograph = findViewById(R.id.detail_user_idiograph);
 
-        TextView userSchoolID = findViewById(R.id.detail_user_schoolID);
-        userSchoolID.setText(MyApplication.userInfo.getSchoolID());
-
-        TextView userSex = findViewById(R.id.detail_user_sex);
-        userSex.setText(MyApplication.userInfo.getSex());
-
-        TextView userBirthday = findViewById(R.id.detail_user_birthday);
-        if(MyApplication.userInfo.isBirthdayEffect())
-            userBirthday.setText(MyApplication.userInfo.getBirthday().toString());
-        else userBirthday.setText("");
-
-        TextView userIdiograph = findViewById(R.id.detail_user_idiograph);
-        userIdiograph.setText(MyApplication.userInfo.getIdioGraph());
+        findViewById(R.id.change_user_detail).setOnClickListener(this);
     }
 
     public static void actionStart(Context context){
         Intent intent = new Intent(context, UserDetailActivity.class);
         context.startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        userName.setText(MyApplication.userInfo.getUserName());
+        userSchoolID.setText(MyApplication.userInfo.getSchoolID());
+        userSex.setText(MyApplication.userInfo.getSex());
+        if(MyApplication.userInfo.isBirthdayEffect())
+            userBirthday.setText(MyApplication.userInfo.getBirthday().toString());
+        userIdiograph.setText(MyApplication.userInfo.getIdioGraph());
+
+        super.onResume();
     }
 
     @Override
@@ -58,5 +66,15 @@ public class UserDetailActivity extends BaseActivity {
             default:
         }
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.change_user_detail:
+                ChangeUserDetailActivity.actionStart(this);
+                break;
+            default:
+        }
     }
 }
