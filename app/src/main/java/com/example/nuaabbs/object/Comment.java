@@ -1,16 +1,18 @@
 package com.example.nuaabbs.object;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
-public class Comment {
-    int commentID;
-    int followPostID;
-    String commentUser;
-    String time;
-    boolean isDependent;
-    int followCommentID;
-    String commentInfo;
+public class Comment implements Serializable {
+    private int commentID;
+    private int followPostID;
+    private int commentUserID;
+    private String commentUser;
+    private String time;
+    private boolean isDependent;
+    private int followCommentID;
+    private String commentInfo;
 
     public Comment(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -43,6 +45,14 @@ public class Comment {
 
     public void setCommentUser(String commentUser) {
         this.commentUser = commentUser;
+    }
+
+    public int getCommentUserID() {
+        return commentUserID;
+    }
+
+    public void setCommentUserID(int commentUserID) {
+        this.commentUserID = commentUserID;
     }
 
     public String getTime() {

@@ -3,7 +3,9 @@ package com.example.nuaabbs.action;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +25,10 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
         Button reg_btn = findViewById(R.id.reg_btn);
         reg_btn.setOnClickListener(this);
         reg_userName = findViewById(R.id.reg_user_name);
@@ -32,6 +38,17 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     public static void actionStart(Context context){
         Intent intent = new Intent(context, RegisterActivity.class);
         context.startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                this.finish();
+                break;
+            default:
+        }
+        return true;
     }
 
     @Override

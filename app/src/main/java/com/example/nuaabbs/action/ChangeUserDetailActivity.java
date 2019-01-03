@@ -39,12 +39,8 @@ public class ChangeUserDetailActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_user_detail);
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null){
+        if(actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-            LogUtil.d("UserDetailActivity", "actionBar != null");
-        }else{
-            LogUtil.d("UserDetailActivity", "actionBar = null");
-        }
 
         userName = findViewById(R.id.change_user_name);
         userName.setText(MyApplication.userInfo.getUserName());

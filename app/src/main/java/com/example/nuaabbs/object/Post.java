@@ -1,21 +1,23 @@
 package com.example.nuaabbs.object;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class Post {
-    int postId;
-    String dateStr;
-    String poster;
-    String postContent;
-    String label;
+public class Post implements Serializable {
+    private int postID;
+    private String poster;
+    private int posterID;
+    private String dateStr;
+    private String label;
+    private String postContent;
 
-    int thumb_upNum = 0;
-    int viewNum = 0;
-    int commentNum = 0;
-    int hotDegree;
-    List<Comment> comments = null;
+    private int thumb_upNum = 0;
+    private int viewNum = 0;
+    private int commentNum = 0;
+    private int hotDegree;
+    private List<Comment> comments;
 
     public Post(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -27,20 +29,33 @@ public class Post {
         hotDegree = (thumb_upNum*4 + viewNum*2 + commentNum*4)/10;
     }
 
-    public int getPostId() {
-        return postId;
+
+    public void addThumb_upNum(){
+        this.thumb_upNum += 1;
     }
 
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void addViewNum(){
+        this.viewNum += 1;
     }
 
-    public String getDateStr() {
-        return dateStr;
+    public void addCommentNum(){
+        this.commentNum += 1;
     }
 
-    public void setDateStr(String dateStr) {
-        this.dateStr = dateStr;
+    public void calculateHotDegree(){
+        this.hotDegree = (this.thumb_upNum*4 + this.viewNum*2 + this.commentNum*4)/10;
+    }
+
+    public void addComments(Comment comment){
+        this.comments.add(comment);
+    }
+
+    public int getPostID() {
+        return postID;
+    }
+
+    public void setPostID(int postID) {
+        this.postID = postID;
     }
 
     public String getPoster() {
@@ -51,12 +66,20 @@ public class Post {
         this.poster = poster;
     }
 
-    public String getPostContent() {
-        return postContent;
+    public int getPosterID() {
+        return posterID;
     }
 
-    public void setPostContent(String postContent) {
-        this.postContent = postContent;
+    public void setPosterID(int posterID) {
+        this.posterID = posterID;
+    }
+
+    public String getDateStr() {
+        return dateStr;
+    }
+
+    public void setDateStr(String dateStr) {
+        this.dateStr = dateStr;
     }
 
     public String getLabel() {
@@ -67,16 +90,20 @@ public class Post {
         this.label = label;
     }
 
+    public String getPostContent() {
+        return postContent;
+    }
+
+    public void setPostContent(String postContent) {
+        this.postContent = postContent;
+    }
+
     public int getThumb_upNum() {
         return thumb_upNum;
     }
 
     public void setThumb_upNum(int thumb_upNum) {
         this.thumb_upNum = thumb_upNum;
-    }
-
-    public void addThumb_upNum(){
-        this.thumb_upNum += 1;
     }
 
     public int getViewNum() {
@@ -87,20 +114,12 @@ public class Post {
         this.viewNum = viewNum;
     }
 
-    public void addViewNum(){
-        this.viewNum += 1;
-    }
-
     public int getCommentNum() {
         return commentNum;
     }
 
     public void setCommentNum(int commentNum) {
         this.commentNum = commentNum;
-    }
-
-    public void addCommentNum(){
-        this.commentNum += 1;
     }
 
     public int getHotDegree() {
@@ -111,19 +130,11 @@ public class Post {
         this.hotDegree = hotDegree;
     }
 
-    public void calculateHotDegree(){
-        this.hotDegree = (this.thumb_upNum*4 + this.viewNum*2 + this.commentNum*4)/10;
-    }
-
     public List<Comment> getComments() {
         return comments;
     }
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
-    }
-
-    public void addComments(Comment comment){
-        this.comments.add(comment);
     }
 }

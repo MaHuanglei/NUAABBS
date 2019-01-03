@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.example.nuaabbs.common.Constant;
+import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.object.CommonRequest;
 import com.example.nuaabbs.object.CommonResponse;
 
@@ -27,12 +28,17 @@ public class OkHttpUtil {
 
         client = new OkHttpClient();
         client.newBuilder()
-                .connectTimeout(10, TimeUnit.SECONDS)
+                .connectTimeout(8, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS);
     }
 
     public static void executeTask(CommonRequest commonRequest, String url){
+        if(!MyApplication.isNetworkAvailable()){
+            commonResponse = new CommonResponse(Constant.RESCODE_NET_FAIL,Constant.NET_UNABLE,"");
+            return;
+        }
+
         prepareOkHttp();
 
         try{
@@ -47,13 +53,16 @@ public class OkHttpUtil {
             if(response.isSuccessful()){
                 String responseData = response.body().string();
                 commonResponse = Constant.gson.fromJson(responseData, CommonResponse.class);
+                if(response.body() != null) response.body().close();
             }
         }catch (Exception e){
             e.printStackTrace();
             LogUtil.e("OkHttpUtil", e.toString());
 
             if (e.getCause().equals(SocketTimeoutException.class)){
-                commonResponse = new CommonResponse(Constant.NET_TIMEOUT,"","");
+                commonResponse = new CommonResponse(Constant.RESCODE_NET_TIMEOUT,"","");
+            }else{
+                commonResponse = new CommonResponse(Constant.RESCODE_SYSTEM_ERROR,Constant.SYSTEM_ERROR,"");
             }
         }
     }

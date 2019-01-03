@@ -12,6 +12,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,13 +24,19 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import com.example.nuaabbs.R;
+import com.example.nuaabbs.adapter.PostAdapter;
+import com.example.nuaabbs.asyncNetTask.RequestMyPostTask;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.object.Post;
 import com.example.nuaabbs.util.ChoosePhotoUtil;
 import com.example.nuaabbs.util.TakePhotoUtil;
 import com.sun.easysnackbar.BaseTransientBar;
 import com.sun.easysnackbar.EasySnackBar;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -37,6 +45,10 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
     View contentView;
     EasySnackBar snackBar;
     CircleImageView headImg;
+    PostAdapter adapter;
+    RecyclerView personalPageRecyclerView;
+
+    List<Post> postList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +59,8 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         headImg = findViewById(R.id.personal_headImg);
         headImg.setOnClickListener(this);
-        TextView postInfo = findViewById(R.id.post_info);
+        personalPageRecyclerView = findViewById(R.id.personal_page_RecyclerView);
+
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -58,8 +71,23 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
 
         Glide.with(this).load(R.drawable.plane).into(headImg);
         collapsingToolbar.setTitle(MyApplication.userInfo.getUserName());
-        String postInfoStr = generatePostInfoStr("Nice to meet you !");
-        postInfo.setText(postInfoStr);
+
+        initPosts();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        personalPageRecyclerView.setLayoutManager(layoutManager);
+        adapter = new PostAdapter(this, postList, true);
+        personalPageRecyclerView.setAdapter(adapter);
+    }
+
+    private void initPosts(){
+        RequestMyPostTask requestMyPostTask = new RequestMyPostTask(this);
+        requestMyPostTask.execute(MyApplication.userInfo.getId()+"");
+    }
+
+    public void RequestSuccess(List<Post> newPostList){
+        postList.addAll(newPostList);
+        if(adapter != null)
+            adapter.notifyDataSetChanged();
     }
 
     public static void actionStart(Context context){

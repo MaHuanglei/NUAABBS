@@ -14,6 +14,7 @@
         android:id="@+id/comment_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
         android:textSize="12dp"/>
 
 </LinearLayout>

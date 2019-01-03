@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,6 +26,9 @@ public class LoginActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
         userName = findViewById(R.id.user_name);
         password = findViewById(R.id.password);
@@ -34,6 +39,17 @@ public class LoginActivity extends BaseActivity
         Button register = findViewById(R.id.register_btn);
         signIn.setOnClickListener(this);
         register.setOnClickListener(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                this.finish();
+                break;
+            default:
+        }
+        return true;
     }
 
     @Override

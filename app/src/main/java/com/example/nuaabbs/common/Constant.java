@@ -11,9 +11,15 @@ public class Constant {
     public static String URL_Logout = URL + "logout";
     public static String URL_UpdateUserDetail = URL + "updateUserDetail";
     public static String URL_CreateNewPost = URL + "createNewPost";
+    public static String URL_RequestLabelPost = URL + "requestLabelPost";
+    public static String URL_RequestMyPost = URL + "requestMyPost";
+    public static String URL_RequestHotPost = URL + "requestHotPost";
 
     // charset of connection with server
     public static String CONNECT_CHARSET = "application/json; charset=utf-8";
+
+    public static String REQCODE_LIFE_Post = "生活";
+    public static String REQCODE_STUDY_Post = "学习";
 
     // constant string for response code
     public static String RESCODE_SUCCESS = "100";
@@ -21,6 +27,7 @@ public class Constant {
     public static String RESCODE_REGISTERED = "201";
     public static String RESCODE_SQLEXCEPTION = "202";
     public static String RESCODE_NET_FAIL = "400";
+    public static String RESCODE_SYSTEM_ERROR = "403";
     public static String RESCODE_NET_TIMEOUT = "500";
 
 

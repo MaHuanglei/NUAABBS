@@ -61,10 +61,13 @@
             android:label="@string/my_collect_act_title" />
         <activity
             android:name=".action.PersonalPageActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".action.ChangeUserDetailActivity"
-            android:label="@string/change_user_detail_act_title">
+            android:label="@string/change_user_detail_act_title"/>
+        <activity
+            android:name=".action.PostContentActivity"
+            android:label="@string/post_content_act_title">
         </activity>
 
         <provider

@@ -57,10 +57,6 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.action_create:
-                if(!MyApplication.loginState){
-                    Toast.makeText(this, "您还未登录，无法发布帖子！", Toast.LENGTH_SHORT).show();
-                    break;
-                }
                 if(TextUtils.isEmpty(postContent.getText().toString())){
                     Toast.makeText(this, "帖子内容不能为空！", Toast.LENGTH_SHORT).show();
                     break;
@@ -72,14 +68,14 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
     }
 
     private void CreatePost(){
-        String param = "" + MyApplication.userInfo.getId();
+        String param = MyApplication.userInfo.getUserName() + ":&:" + MyApplication.userInfo.getId();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         param += ":&:" + dateFormat.format(new Date(System.currentTimeMillis()));
 
         int labelID = ((RadioGroup)findViewById(R.id.create_post_label)).getCheckedRadioButtonId();
         if(labelID == R.id.label_life) param += ":&:" + "生活";
-        else if(labelID == R.id.label_life) param += ":&:" + "学习";
+        else if(labelID == R.id.label_study) param += ":&:" + "学习";
 
         param += ":&:" + postContent.getText().toString();
         LogUtil.d("createNewPost", param);

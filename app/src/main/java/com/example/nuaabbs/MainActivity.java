@@ -149,16 +149,24 @@ public class MainActivity extends BaseActivity
         // Handle navigation view item clicks here.
         switch(item.getItemId()){
             case R.id.nav_post:
-                MyPostActivity.actionStart(MainActivity.this);
+                if(!MyApplication.loginState)
+                    Toast.makeText(this,"你还没有登录！", Toast.LENGTH_SHORT).show();
+                else MyPostActivity.actionStart(MainActivity.this);
                 break;
             case R.id.nav_drafts:
-                MyDraftActivity.actionStart(MainActivity.this);
+                if(!MyApplication.loginState)
+                    Toast.makeText(this,"你还没有登录！", Toast.LENGTH_SHORT).show();
+                else MyDraftActivity.actionStart(MainActivity.this);
                 break;
             case R.id.nav_care:
-                MyCareActivity.actionStart(MainActivity.this);
+                if(!MyApplication.loginState)
+                    Toast.makeText(this,"你还没有登录！", Toast.LENGTH_SHORT).show();
+                else MyCareActivity.actionStart(MainActivity.this);
                 break;
             case R.id.nav_collection:
-                MyCollectActivity.actionStart(MainActivity.this);
+                if(!MyApplication.loginState)
+                    Toast.makeText(this,"你还没有登录！", Toast.LENGTH_SHORT).show();
+                else MyCollectActivity.actionStart(MainActivity.this);
                 break;
             case R.id.nav_setting:
                 SystemSettingActivity.actionStart(MainActivity.this);
@@ -181,7 +189,9 @@ public class MainActivity extends BaseActivity
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.fab:
-                CreatePostActivity.actionStart(MainActivity.this);
+                if(!MyApplication.loginState)
+                    Toast.makeText(this, "您还未登录,无法创建帖子！", Toast.LENGTH_SHORT).show();
+                else CreatePostActivity.actionStart(MainActivity.this);
                 break;
             case R.id.headPortrait:
             case R.id.loginState:
