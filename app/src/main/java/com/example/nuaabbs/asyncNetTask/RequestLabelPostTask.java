@@ -56,7 +56,6 @@ public class RequestLabelPostTask extends AsyncTask<String, Void, Boolean> {
 
         String resCode = commonResponse.getResCode();
         if(resCode.equals(Constant.RESCODE_SUCCESS)){
-            commonResponse = OkHttpUtil.getCommonResponse();
             List<Post> newPostList = Constant.gson.fromJson(commonResponse.getResParam(),
                                             new TypeToken<List<Post>>(){}.getType());
             if(postLabel.equals(Constant.REQCODE_LIFE_Post))

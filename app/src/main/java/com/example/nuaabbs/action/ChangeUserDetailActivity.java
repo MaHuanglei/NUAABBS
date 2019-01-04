@@ -143,6 +143,7 @@ public class ChangeUserDetailActivity extends BaseActivity
         else newUserDetail += ":&:" + "null";
 
         newUserDetail += ":&:" + idiograph.getText().toString();
+        LogUtil.d("changeUserDetail", newUserDetail);
 
         return newUserDetail;
     }
@@ -154,7 +155,7 @@ public class ChangeUserDetailActivity extends BaseActivity
             return true;
         if(!sex.getText().toString().equals(MyApplication.userInfo.getSex()))
             return true;
-        if(nowDate != null && nowDate != MyApplication.userInfo.getBirthday())
+        if(nowDate != null && !nowDate.equals(MyApplication.userInfo.getBirthday()))
             return true;
         if(!idiograph.getText().toString().equals(MyApplication.userInfo.getIdioGraph()))
             return true;

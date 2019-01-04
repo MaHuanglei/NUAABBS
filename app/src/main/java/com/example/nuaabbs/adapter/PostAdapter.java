@@ -16,10 +16,14 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.action.PostContentActivity;
+import com.example.nuaabbs.asyncNetTask.PostRelatedActionTask;
+import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.object.Comment;
 import com.example.nuaabbs.object.Post;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,6 +112,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 post.addThumb_upNum();
                 post.calculateHotDegree();
                 holder.thumb_up_Num.setText(Integer.toString(post.getThumb_upNum()));
+                DealPostRelatedAction(Constant.REQCODE_THUMBUP, post.getPostID()+"");
             }
         });
 
@@ -123,12 +128,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         holder.commentNum.setText(Integer.toString(post.getCommentNum()));
 
                         Comment comment = new Comment();
+                        comment.setFollowPostID(post.getPostID());
                         comment.setCommentUser(MyApplication.userInfo.getUserName());
                         comment.setCommentUserID(MyApplication.userInfo.getId());
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        comment.setTime(dateFormat.format(new Date(System.currentTimeMillis())));
+                        comment.setDependent(true);
+                        comment.setFollowCommentID(0);
                         comment.setCommentInfo(holder.commentEdit.getText().toString());
                         post.addComments(comment);
                         holder.commentView.getAdapter().notifyDataSetChanged();
                         holder.commentEdit.getText().clear();
+
+                        String json = Constant.gson.toJson(comment);
+                        DealPostRelatedAction(Constant.REQCODE_COMMENT, json);
                     }
                 }else{
                     Toast.makeText(mContext, "您还未登录！", Toast.LENGTH_LONG).show();
@@ -145,6 +158,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 post.addViewNum();
                 post.calculateHotDegree();
                 holder.viewNum.setText(Integer.toString(post.getViewNum()));
+                DealPostRelatedAction(Constant.REQCODE_VIEW, post.getPostID()+"");
 
                 PostContentActivity.actionStart(mContext, post);
             }
@@ -182,4 +196,33 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         return postList.size();
     }
 
+    private void DealPostRelatedAction(String reqCode, String param){
+        PostRelatedActionTask task = new PostRelatedActionTask(mContext, this);
+        task.execute(reqCode, param);
+    }
+
+    public void DealFail(String reqCode, String param){
+        if(reqCode.equals(Constant.REQCODE_COMMENT)){
+            int postId = Constant.gson.fromJson(param, Comment.class).getFollowPostID();
+            for (Post post: postList){
+                if(postId == post.getPostID()){
+                    post.deleteLastComment();
+                    post.decCommentNum();
+                    break;
+                }
+            }
+        }else {
+            boolean thumb_up = true;
+            if(reqCode.equals(Constant.REQCODE_COMMENT))
+                    thumb_up = false;
+
+            for (Post post: postList){
+                if(param.equals(post.getPostID())){
+                    if(thumb_up) post.decThumb_upNum();
+                    else post.decViewNum();
+                    break;
+                }
+            }
+        }
+    }
 }

@@ -20,11 +20,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView commentUser;
         TextView commentInfo;
+        TextView responseLabel;
+        TextView sendToUser;
 
         public ViewHolder(View view){
             super(view);
-            commentUser = (TextView)view.findViewById(R.id.comment_user);
-            commentInfo = (TextView)view.findViewById(R.id.comment_info);
+            commentUser = view.findViewById(R.id.comment_user);
+            commentInfo = view.findViewById(R.id.comment_info);
+            responseLabel = view.findViewById(R.id.response_label);
+            sendToUser = view.findViewById(R.id.send_to_user);
         }
     }
 
@@ -44,12 +48,28 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Comment comment = commentList.get(position);
-        holder.commentUser.setText(comment.getCommentUser()+":");
-        holder.commentInfo.setText(comment.getCommentInfo());
+        holder.commentUser.setText(comment.getCommentUser());
+        if(comment.isDependent()){
+            holder.responseLabel.setVisibility(View.GONE);
+            holder.sendToUser.setVisibility(View.GONE);
+        }else{
+            holder.responseLabel.setVisibility(View.VISIBLE);
+            holder.sendToUser.setVisibility(View.VISIBLE);
+            holder.sendToUser.setText(GetFollowCommentUser(comment.getFollowCommentID()));
+        }
+        holder.commentInfo.setText(" : " + comment.getCommentInfo());
     }
 
     @Override
     public int getItemCount() {
         return commentList.size();
+    }
+
+    private String GetFollowCommentUser(int followCommentID){
+        for (Comment comment: commentList) {
+            if(comment.getCommentID() == followCommentID)
+                return comment.getCommentUser();
+        }
+        return "";
     }
 }

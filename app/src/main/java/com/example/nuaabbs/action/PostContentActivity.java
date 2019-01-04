@@ -4,12 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.nuaabbs.R;
+import com.example.nuaabbs.adapter.CommentAdapter;
 import com.example.nuaabbs.object.Post;
 
 
@@ -17,12 +20,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostContentActivity extends BaseActivity {
 
-    //List<Comment> commentList;
-
     Post post;
 
     TextView sender;
     TextView time;
+    TextView label;
     CircleImageView headPortrait;
     TextView postInfo;
     ImageView views;
@@ -32,7 +34,7 @@ public class PostContentActivity extends BaseActivity {
     ImageView comment;
     TextView commentNum;
 
-    //RecyclerView commentView;
+    RecyclerView commentView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class PostContentActivity extends BaseActivity {
 
         sender = findViewById(R.id.post_content_sender);
         time = findViewById(R.id.post_content_time);
+        label = findViewById(R.id.post_content_label);
         headPortrait = findViewById(R.id.post_content_head);
         postInfo = findViewById(R.id.post_content_info);
         views = findViewById(R.id.post_content_views);
@@ -54,10 +57,11 @@ public class PostContentActivity extends BaseActivity {
         thumb_up_Num = findViewById(R.id.post_content_thumb_up_num);
         comment = findViewById(R.id.post_content_comment);
         commentNum = findViewById(R.id.post_content_comment_num);
-        //commentView = findViewById(R.id.post_content_comment_RecyclerView);
+        commentView = findViewById(R.id.post_content_comment_RecyclerView);
 
         sender.setText(post.getPoster());
         time.setText(post.getDateStr());
+        label.setText(post.getLabel());
         Glide.with(this).load(R.drawable.plane).into(headPortrait);
         postInfo.setText(post.getPostContent());
         Glide.with(this).load(R.drawable.ic_menu_view).into(views);
@@ -67,11 +71,10 @@ public class PostContentActivity extends BaseActivity {
         Glide.with(this).load(R.drawable.ic_menu_comment).into(comment);
         commentNum.setText(Integer.toString(post.getCommentNum()));
 
-        /*initComment();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         commentView.setLayoutManager(layoutManager);
-        CommentAdapter commentAdapter = new CommentAdapter(this, commentList);
-        commentView.setAdapter(commentAdapter);*/
+        CommentAdapter commentAdapter = new CommentAdapter(this, post.getComments());
+        commentView.setAdapter(commentAdapter);
     }
 
     public static void actionStart(Context context, Post post){
@@ -90,9 +93,5 @@ public class PostContentActivity extends BaseActivity {
         }
         return true;
     }
-
-    /*private void initComment(){
-        this.commentList = post.getComments();
-    }*/
 
 }

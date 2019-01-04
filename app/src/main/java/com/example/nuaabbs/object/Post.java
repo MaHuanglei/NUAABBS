@@ -34,12 +34,24 @@ public class Post implements Serializable {
         this.thumb_upNum += 1;
     }
 
+    public void decThumb_upNum(){
+        this.thumb_upNum -= 1;
+    }
+
     public void addViewNum(){
         this.viewNum += 1;
     }
 
+    public void decViewNum(){
+        this.viewNum -= 1;
+    }
+
     public void addCommentNum(){
         this.commentNum += 1;
+    }
+
+    public void decCommentNum(){
+        this.commentNum -= 1;
     }
 
     public void calculateHotDegree(){
@@ -48,6 +60,10 @@ public class Post implements Serializable {
 
     public void addComments(Comment comment){
         this.comments.add(comment);
+    }
+
+    public void deleteLastComment(){
+        this.comments.remove(this.comments.size()-1);
     }
 
     public int getPostID() {

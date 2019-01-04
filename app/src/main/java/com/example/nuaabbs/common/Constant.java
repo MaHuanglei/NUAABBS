@@ -14,12 +14,16 @@ public class Constant {
     public static String URL_RequestLabelPost = URL + "requestLabelPost";
     public static String URL_RequestMyPost = URL + "requestMyPost";
     public static String URL_RequestHotPost = URL + "requestHotPost";
+    public static String URL_PostRelatedAction = URL + "postRelatedAction";
 
     // charset of connection with server
     public static String CONNECT_CHARSET = "application/json; charset=utf-8";
 
     public static String REQCODE_LIFE_Post = "生活";
     public static String REQCODE_STUDY_Post = "学习";
+    public static String REQCODE_VIEW = "add view num";
+    public static String REQCODE_THUMBUP = "add thumb_up num";
+    public static String REQCODE_COMMENT = "add comment";
 
     // constant string for response code
     public static String RESCODE_SUCCESS = "100";
