@@ -1,8 +1,9 @@
 package com.example.nuaabbs.object;
 
+import com.example.nuaabbs.common.MyApplication;
+
 import java.io.Serializable;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Post implements Serializable {
@@ -16,19 +17,18 @@ public class Post implements Serializable {
     private int thumb_upNum = 0;
     private int viewNum = 0;
     private int commentNum = 0;
-    private int hotDegree;
+    private int hotDegree = 5;
     private List<Comment> comments;
 
     public Post(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateStr = dateFormat.format(new Date(System.currentTimeMillis()));
 
-        poster = "X";
-        label = "life";
-        postContent = "Write your story!";
-        hotDegree = (thumb_upNum*4 + viewNum*2 + commentNum*4)/10;
     }
 
+    public Post(boolean newPost){
+        poster = MyApplication.userInfo.getUserName();
+        posterID = MyApplication.userInfo.getId();
+        comments = new ArrayList<>();
+    }
 
     public void addThumb_upNum(){
         this.thumb_upNum += 1;
@@ -55,7 +55,7 @@ public class Post implements Serializable {
     }
 
     public void calculateHotDegree(){
-        this.hotDegree = (this.thumb_upNum*4 + this.viewNum*2 + this.commentNum*4)/10;
+        this.hotDegree = this.thumb_upNum*2 + this.viewNum + this.commentNum*3+5;
     }
 
     public void addComments(Comment comment){

@@ -4,12 +4,14 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.nuaabbs.common.Constant;
+import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.fragment.BaseFragment;
 import com.example.nuaabbs.fragment.LifePostFragment;
 import com.example.nuaabbs.fragment.StudyPostFragment;
 import com.example.nuaabbs.object.CommonRequest;
 import com.example.nuaabbs.object.CommonResponse;
 import com.example.nuaabbs.object.Post;
+import com.example.nuaabbs.util.HelperUtil;
 import com.example.nuaabbs.util.OkHttpUtil;
 import com.google.gson.reflect.TypeToken;
 
@@ -58,9 +60,14 @@ public class RequestLabelPostTask extends AsyncTask<String, Void, Boolean> {
         if(resCode.equals(Constant.RESCODE_SUCCESS)){
             List<Post> newPostList = Constant.gson.fromJson(commonResponse.getResParam(),
                                             new TypeToken<List<Post>>(){}.getType());
-            if(postLabel.equals(Constant.REQCODE_LIFE_Post))
-                ((LifePostFragment)fragment).RequestSuccess(newPostList);
-            else ((StudyPostFragment)fragment).RequestSuccess(newPostList);
+
+            if(postLabel.equals(Constant.REQCODE_LIFE_Post)){
+                PostListManager.refreshLifePostList(newPostList);
+                ((LifePostFragment)fragment).RequestSuccess();
+            } else{
+                PostListManager.refreshStudyPostList(newPostList);
+                ((StudyPostFragment) fragment).RequestSuccess();
+            }
         }else {
             if(postLabel.equals(Constant.REQCODE_LIFE_Post))
                 ((LifePostFragment)fragment).RequestFail();

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginTop="5dp">
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -13,42 +15,54 @@
             android:id="@+id/post_content_head"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp" />
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher_round" />
 
-        <TextView
-            android:id="@+id/post_content_sender"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toRightOf="@+id/post_content_head"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/colorBlack"
-            android:maxEms="8"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:textSize="16sp"/>
+            android:layout_marginLeft="10dp">
 
-        <TextView
-            android:id="@+id/post_content_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toRightOf="@id/post_content_sender"
-            android:layout_marginLeft="30dp"
-            android:textColor="@color/colorLightRed"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/post_content_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            app:layout_constraintTop_toBottomOf="@id/post_content_sender"
-            android:layout_marginLeft="50dp"/>
+                <TextView
+                    android:id="@+id/post_content_sender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:maxEms="8"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:textSize="16sp"/>
 
-    </android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:id="@+id/post_content_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:textColor="@color/colorLightRed"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/post_content_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorGray2"/>
 
     <TextView
         android:id="@+id/post_content_info"
@@ -67,7 +81,8 @@
             android:id="@+id/post_content_views"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginLeft="5dp"/>
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/ic_btn_view"/>
 
         <TextView
             android:id="@+id/post_content_view_num"
@@ -80,7 +95,8 @@
             android:id="@+id/post_content_thumb_up"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginLeft="180dp"/>
+            android:layout_marginLeft="180dp"
+            android:src="@drawable/ic_btn_thumbup"/>
 
         <TextView
             android:id="@+id/post_content_thumb_up_num"
@@ -93,7 +109,8 @@
             android:id="@+id/post_content_comment"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginLeft="3dp"/>
+            android:layout_marginLeft="3dp"
+            android:src="@drawable/ic_btn_comment"/>
 
         <TextView
             android:id="@+id/post_content_comment_num"
@@ -110,7 +127,7 @@
         android:background="@color/colorGray2"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/post_content_comment_RecyclerView"
+        android:id="@+id/post_content_comment_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"

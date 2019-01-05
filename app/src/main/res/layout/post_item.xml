@@ -20,54 +20,59 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
 
-            <android.support.constraint.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/poster_head"
+                    android:id="@+id/post_head"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    />
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_launcher_round" />
 
-                <TextView
-                    android:id="@+id/post_sender"
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toRightOf="@id/poster_head"
-                    android:layout_marginLeft="10dp"
-                    android:maxEms="8"
-                    android:singleLine="true"
-                    android:ellipsize="marquee"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="16sp"/>
+                    android:layout_marginLeft="10dp">
 
-                <TextView
-                    android:id="@+id/post_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    app:layout_constraintTop_toBottomOf="@id/post_sender"
-                    android:layout_marginLeft="50dp"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/post_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toRightOf="@id/post_sender"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="@color/colorLightRed"/>
+                        <TextView
+                            android:id="@+id/post_sender"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorBlack"
+                            android:maxEms="8"
+                            android:singleLine="true"
+                            android:ellipsize="marquee"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:textSize="16sp"/>
 
-            </android.support.constraint.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/post_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="30dp"
+                            android:textColor="@color/colorLightRed"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/post_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"/>
+
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/post_info"
@@ -75,7 +80,6 @@
                 android:layout_height="wrap_content"
                 android:maxLines="4"
                 android:ellipsize="end"
-                android:layout_margin="5dp"
                 android:textColor="@color/colorBlack"
                 android:textSize="16sp" />
 
@@ -88,7 +92,8 @@
                     android:id="@+id/views"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:layout_marginLeft="5dp"/>
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/ic_btn_view"/>
 
                 <TextView
                     android:id="@+id/view_num"
@@ -101,7 +106,8 @@
                     android:id="@+id/thumb_up"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:layout_marginLeft="180dp"/>
+                    android:layout_marginLeft="180dp"
+                    android:src="@drawable/ic_btn_thumbup"/>
 
                 <TextView
                     android:id="@+id/thumb_up_num"
@@ -114,7 +120,8 @@
                     android:id="@+id/comment"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:layout_marginLeft="3dp"/>
+                    android:layout_marginLeft="3dp"
+                    android:src="@drawable/ic_btn_comment"/>
 
                 <TextView
                     android:id="@+id/comment_num"
@@ -128,20 +135,18 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
                 android:background="@color/colorGray2"/>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/comment_RecyclerView"
+                android:id="@+id/comment_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"/>
+                android:clickable="true"
+                android:focusable="true"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp">
+                android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/comment_edit"
@@ -150,6 +155,8 @@
                     android:minHeight="27dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:background="@color/colorGray3"
                     android:textSize="15dp"
                     android:hint="评论"

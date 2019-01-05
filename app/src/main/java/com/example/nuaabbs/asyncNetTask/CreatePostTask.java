@@ -52,7 +52,7 @@ public class CreatePostTask extends AsyncTask<String, Void, Boolean> {
         if(resCode.equals(Constant.RESCODE_SUCCESS)){
             progressBar.setVisibility(View.GONE);
             Toast.makeText(context, commonResponse.getResMsg(), Toast.LENGTH_SHORT).show();
-            ((CreatePostActivity)context).CreateSuccess();
+            ((CreatePostActivity)context).CreateSuccess(Integer.parseInt(commonResponse.getResParam()));
         }else {
             progressBar.setVisibility(View.INVISIBLE);
             OkHttpUtil.stdDealResult(context, "CreateNewPostTask");

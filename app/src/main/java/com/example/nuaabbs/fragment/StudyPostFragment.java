@@ -14,6 +14,7 @@ import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.asyncNetTask.RequestLabelPostTask;
 import com.example.nuaabbs.common.Constant;
+import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.Post;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Random;
 
 public class StudyPostFragment extends BaseFragment {
-    private List<Post> postList = new ArrayList<>();
+    private List<Post> postList = PostListManager.studyPostList;
     private PostAdapter postAdapter;
     private SwipeRefreshLayout swipeRefresh;
 
@@ -58,7 +59,8 @@ public class StudyPostFragment extends BaseFragment {
     }
 
     private void initPosts(){
-        refreshPost();
+        if(PostListManager.studyPostList.isEmpty())
+            refreshPost();
     }
 
     private void refreshPost(){
@@ -67,8 +69,7 @@ public class StudyPostFragment extends BaseFragment {
         requestLabelPostTask.execute(Constant.REQCODE_STUDY_Post);
     }
 
-    public void RequestSuccess(List<Post> newPostList){
-        postList.addAll(0, newPostList);
+    public void RequestSuccess(){
         postAdapter.notifyDataSetChanged();
         closeRefreshBar(true);
     }

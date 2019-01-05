@@ -7,9 +7,11 @@ import com.example.nuaabbs.action.BaseActivity;
 import com.example.nuaabbs.action.MyPostActivity;
 import com.example.nuaabbs.action.PersonalPageActivity;
 import com.example.nuaabbs.common.Constant;
+import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.CommonRequest;
 import com.example.nuaabbs.object.CommonResponse;
 import com.example.nuaabbs.object.Post;
+import com.example.nuaabbs.util.HelperUtil;
 import com.example.nuaabbs.util.OkHttpUtil;
 import com.google.gson.reflect.TypeToken;
 
@@ -49,9 +51,11 @@ public class RequestMyPostTask extends AsyncTask<String, Void, Boolean> {
             commonResponse = OkHttpUtil.getCommonResponse();
             List<Post> newPostList = Constant.gson.fromJson(commonResponse.getResParam(),
                     new TypeToken<List<Post>>(){}.getType());
+            PostListManager.refreshMyPostList(newPostList);
+
             if(((BaseActivity)context).getClass().getSimpleName().equals("MyPostActivity"))
-                ((MyPostActivity)context).RequestSuccess(newPostList);
-            else ((PersonalPageActivity)context).RequestSuccess(newPostList);
+                ((MyPostActivity)context).RequestSuccess();
+            else ((PersonalPageActivity)context).RequestSuccess();
         }else {
             OkHttpUtil.stdDealResult(context, "RequestMyPost");
         }

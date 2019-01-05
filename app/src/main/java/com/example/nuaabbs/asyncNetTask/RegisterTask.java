@@ -53,12 +53,9 @@ public class RegisterTask extends AsyncTask<String, Void, Boolean> {
 
         String resCode = commonResponse.getResCode();
         if(resCode.equals(Constant.RESCODE_SUCCESS)){
-            MyApplication.loginState = true;
-            MyApplication.userInfo = Constant.gson.fromJson(commonResponse.getResParam(), UserInfo.class);
             progressBar.setVisibility(View.GONE);
             Toast.makeText(context, commonResponse.getResMsg(), Toast.LENGTH_SHORT).show();
-            ((RegisterActivity)context).registerSuccess();
-
+            ((RegisterActivity)context).registerSuccess(Integer.parseInt(commonResponse.getResParam()));
         }else if(resCode.equals(Constant.RESCODE_REGISTERED)){
             progressBar.setVisibility(View.INVISIBLE);
             Toast.makeText(context, commonResponse.getResMsg(), Toast.LENGTH_SHORT).show();

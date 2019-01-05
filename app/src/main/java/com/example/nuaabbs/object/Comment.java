@@ -1,5 +1,7 @@
 package com.example.nuaabbs.object;
 
+import com.example.nuaabbs.common.MyApplication;
+
 import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -15,12 +17,14 @@ public class Comment implements Serializable {
     private String commentInfo;
 
     public Comment(){
+        commentUser = MyApplication.userInfo.getUserName();
+        commentUserID = MyApplication.userInfo.getId();
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         time = dateFormat.format(new Date(System.currentTimeMillis()));
 
-        commentUser = "X";
         isDependent = true;
-        commentInfo = "That sounds good!";
+        followCommentID = 0;
     }
 
     public int getCommentID() {

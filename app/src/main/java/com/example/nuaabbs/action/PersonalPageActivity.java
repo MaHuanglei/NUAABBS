@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.asyncNetTask.RequestMyPostTask;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.Post;
 import com.example.nuaabbs.util.ChoosePhotoUtil;
 import com.example.nuaabbs.util.TakePhotoUtil;
@@ -48,7 +50,7 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
     PostAdapter adapter;
     RecyclerView personalPageRecyclerView;
 
-    List<Post> postList = new ArrayList<>();
+    List<Post> postList = PostListManager.myPostList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +82,17 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void initPosts(){
+        if(PostListManager.myPostList.isEmpty()){
+            refreshPost();
+        }
+    }
+
+    private void refreshPost(){
         RequestMyPostTask requestMyPostTask = new RequestMyPostTask(this);
         requestMyPostTask.execute(MyApplication.userInfo.getId()+"");
     }
 
-    public void RequestSuccess(List<Post> newPostList){
-        postList.addAll(newPostList);
+    public void RequestSuccess(){
         if(adapter != null)
             adapter.notifyDataSetChanged();
     }
@@ -101,13 +108,6 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
         return true;
     }
 
-    private String generatePostInfoStr(String postInfo) {
-        StringBuilder postContent = new StringBuilder();
-        for (int i = 0; i < 500; i++) {
-            postContent.append(postInfo);
-        }
-        return postContent.toString();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

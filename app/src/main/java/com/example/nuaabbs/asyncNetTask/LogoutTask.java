@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.example.nuaabbs.MainActivity;
+import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.common.UserInfo;
 import com.example.nuaabbs.object.CommonRequest;
 import com.example.nuaabbs.object.CommonResponse;
@@ -52,6 +53,7 @@ public class LogoutTask extends AsyncTask<Void, Void, Boolean> {
             MyApplication.userInfo = new Gson()
                     .fromJson(OkHttpUtil.getCommonResponse().getResParam(), UserInfo.class);
             MyApplication.loginState = false;
+            PostListManager.myPostList.clear();
             ((MainActivity)context).RefreshNavigationView();
             Toast.makeText(context, "下线成功！", Toast.LENGTH_SHORT).show();
         }else OkHttpUtil.stdDealResult(context, "MainActivity Logout");

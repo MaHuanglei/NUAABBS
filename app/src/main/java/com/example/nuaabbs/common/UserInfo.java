@@ -1,23 +1,37 @@
 package com.example.nuaabbs.common;
 
+import com.example.nuaabbs.object.Post;
 import com.example.nuaabbs.util.LogUtil;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserInfo {
-    int id;
-    String userName;
-    String password;
-    String schoolID;
-    String headPortrait;
-    String  sex;
-    Date birthday;
-    String idioGraph;
-    int postNum;
-    int draftNum;
-    int collectPostNum;
-    int careUserNum;
-    int fansNum;
+    private int id;
+
+    private String userName;
+    private String password;
+    private String schoolID;
+    private String sex;
+
+    private Date birthday;
+
+    private String headPortrait;
+    private String idioGraph;
+    private int postNum;
+    private int draftNum;
+    private int collectPostNum;
+    private int careUserNum;
+    private int fansNum;
+
+
+    public UserInfo(){
+
+        headPortrait = "default.jpg";
+        idioGraph = "此人很懒，什么都没写哦";
+        postNum = draftNum = collectPostNum = careUserNum = fansNum = 0;
+    }
 
     public void PrintUserInfo(){
 

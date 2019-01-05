@@ -3,7 +3,7 @@ package com.example.nuaabbs.asyncNetTask;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.example.nuaabbs.adapter.PostAdapter;
+import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.object.CommonRequest;
 import com.example.nuaabbs.object.CommonResponse;
@@ -11,12 +11,12 @@ import com.example.nuaabbs.util.OkHttpUtil;
 
 public class PostRelatedActionTask extends AsyncTask<String, String, Boolean> {
     private Context context;
-    PostAdapter adapter;
+    private String reqCode;
     private CommonResponse commonResponse;
 
-    public PostRelatedActionTask(Context context, PostAdapter adapter){
+    public PostRelatedActionTask(Context context/*, PostAdapter adapter*/){
         this.context = context;
-        this.adapter = adapter;
+        //this.adapter = adapter;
     }
 
     @Override
@@ -25,6 +25,7 @@ public class PostRelatedActionTask extends AsyncTask<String, String, Boolean> {
             CommonRequest commonRequest = new CommonRequest();
             commonRequest.setRequestCode(params[0]);
             commonRequest.setParam1(params[1]);
+            reqCode = params[0];
 
             OkHttpUtil.executeTask(commonRequest, Constant.URL_PostRelatedAction);
             commonResponse = OkHttpUtil.getCommonResponse();
@@ -42,8 +43,12 @@ public class PostRelatedActionTask extends AsyncTask<String, String, Boolean> {
         super.onProgressUpdate(values);
 
         String resCode = commonResponse.getResCode();
-        if(!resCode.equals(Constant.RESCODE_SUCCESS)){
-            adapter.DealFail(values[0], values[1]);
+        if(resCode.equals(Constant.RESCODE_SUCCESS)){
+            if(reqCode.equals(Constant.REQCODE_COMMENT)){
+                int id = Integer.parseInt(commonResponse.getResParam());
+                CommonCache.setNewCommentID(id);
+            }
+        }else{
             OkHttpUtil.stdDealResult(context, "PostRelatedAction");
         }
     }

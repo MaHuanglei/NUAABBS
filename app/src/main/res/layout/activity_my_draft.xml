@@ -7,9 +7,17 @@
     tools:context=".action.MyDraftActivity">
 
     <TextView
+        android:id="@+id/comment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="50dp"
         android:gravity="center"
         android:text="Wait for later update !"/>
+
+    <TextView
+        android:id="@+id/showContent"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toBottomOf="@+id/comment"
+        android:gravity="center" />
 
 </android.support.constraint.ConstraintLayout>

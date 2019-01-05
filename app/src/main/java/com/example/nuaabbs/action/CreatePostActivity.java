@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.asyncNetTask.CreatePostTask;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.common.PostListManager;
+import com.example.nuaabbs.object.Post;
 import com.example.nuaabbs.util.LogUtil;
 
 import java.sql.Date;
@@ -22,6 +24,7 @@ import java.text.SimpleDateFormat;
 
 public class CreatePostActivity extends BaseActivity implements View.OnClickListener{
     EditText postContent;
+    Post newPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,16 +71,27 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
     }
 
     private void CreatePost(){
+        newPost = new Post(true);
         String param = MyApplication.userInfo.getUserName() + ":&:" + MyApplication.userInfo.getId();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        param += ":&:" + dateFormat.format(new Date(System.currentTimeMillis()));
+        String tmp = dateFormat.format(new Date(System.currentTimeMillis()));
+        newPost.setDateStr(tmp);
+        param += ":&:" + tmp;
 
         int labelID = ((RadioGroup)findViewById(R.id.create_post_label)).getCheckedRadioButtonId();
-        if(labelID == R.id.label_life) param += ":&:" + "生活";
-        else if(labelID == R.id.label_study) param += ":&:" + "学习";
+        if(labelID == R.id.label_life){
+            param += ":&:" + "生活";
+            newPost.setLabel("生活");
+        }
+        else{
+            param += ":&:" + "学习";
+            newPost.setLabel("学习");
+        }
 
-        param += ":&:" + postContent.getText().toString();
+        tmp = postContent.getText().toString();
+        newPost.setPostContent(tmp);
+        param += ":&:" + tmp;
         LogUtil.d("createNewPost", param);
 
         CreatePostTask createPostTask =
@@ -85,7 +99,15 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
         createPostTask.execute(param);
     }
 
-    public void CreateSuccess(){
+    public void CreateSuccess(int postID){
+
+        newPost.setPostID(postID);
+        if(newPost.getLabel().equals("学习"))
+            PostListManager.studyPostList.add(0, newPost);
+        else PostListManager.lifePostList.add(0, newPost);
+        PostListManager.myPostList.add(0, newPost);
+        PostListManager.hotPostList.add(newPost);
+
         this.finish();
     }
 }

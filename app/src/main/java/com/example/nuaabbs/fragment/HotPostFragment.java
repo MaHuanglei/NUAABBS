@@ -13,16 +13,14 @@ import android.widget.Toast;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.asyncNetTask.RequestHotPostTask;
+import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.Post;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HotPostFragment extends BaseFragment {
 
-    private Post[] posts = {new Post(),new Post(),new Post(),new Post(),
-            new Post(),new Post(),new Post(),new Post()};
-    private List<Post> postList = new ArrayList<>();
+    private List<Post> postList = PostListManager.hotPostList;
     private PostAdapter postAdapter;
     private SwipeRefreshLayout swipeRefresh;
 
@@ -59,7 +57,8 @@ public class HotPostFragment extends BaseFragment {
     }
 
     private void initPosts(){
-        refreshPost();
+        if(PostListManager.hotPostList.isEmpty())
+            refreshPost();
     }
 
     private void refreshPost(){
@@ -67,10 +66,9 @@ public class HotPostFragment extends BaseFragment {
         requestHotPostTask.execute("");
     }
 
-    public void RequestSuccess(List<Post> newPostList){
-        postList.addAll(0, newPostList);
-        postAdapter.notifyDataSetChanged();
+    public void RequestSuccess(){
 
+        postAdapter.notifyDataSetChanged();
         closeRefreshBar(true);
     }
 

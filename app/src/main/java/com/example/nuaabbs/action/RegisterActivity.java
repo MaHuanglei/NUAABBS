@@ -2,6 +2,7 @@ package com.example.nuaabbs.action;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
@@ -81,21 +82,31 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     private void beginRegister(){
         String tmp, param;
         tmp = reg_userName.getText().toString();
+        MyApplication.userInfo.setUserName(tmp);
         param = tmp;
 
         tmp = reg_password.getText().toString();
+        MyApplication.userInfo.setPassword(tmp);
         param += ":&:" + tmp;
 
         EditText reg_schoolID = findViewById(R.id.reg_schoolID);
-        tmp = reg_schoolID.getText().toString();
+        tmp = reg_schoolID.getText().toString().trim();
         if(TextUtils.isEmpty(tmp)) tmp = "null";
+        else MyApplication.userInfo.setSchoolID(tmp);
         param += ":&:" + tmp;
 
         RadioGroup reg_sexGroup = findViewById(R.id.reg_sexGroup);
         int id = reg_sexGroup.getCheckedRadioButtonId();
-        if(id == R.id.reg_sex_man) tmp = "男";
-        else if(id == R.id.reg_sex_woman) tmp = "女";
-        else  tmp = "null";
+        if(id == R.id.reg_sex_man) {
+            tmp = "男";
+            MyApplication.userInfo.setSex("男");
+        } else if(id == R.id.reg_sex_woman){
+            tmp = "女";
+            MyApplication.userInfo.setSex("女");
+        } else{
+            tmp = "null";
+            MyApplication.userInfo.setSex("保密");
+        }
 
         param += ":&:" + tmp;
 
@@ -104,9 +115,22 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         regTask.execute(param);
     }
 
-    public void registerSuccess(){
+    public void registerSuccess(int id){
         MyApplication.loginState = true;
+        MyApplication.userInfo.setId(id);
+        saveLoginInfo();
         MyApplication.userInfo.PrintUserInfo();
         this.finish();
+    }
+
+    public void saveLoginInfo(){
+        SharedPreferences spf = getSharedPreferences("loginData", 0);
+        SharedPreferences.Editor  editor = spf.edit();
+
+        editor.putString("userName", MyApplication.userInfo.getUserName());
+        editor.putString("password", MyApplication.userInfo.getPassword());
+        editor.putBoolean("remPassword", true);
+
+        editor.apply();
     }
 }

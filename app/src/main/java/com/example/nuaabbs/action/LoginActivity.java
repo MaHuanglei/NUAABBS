@@ -77,7 +77,7 @@ public class LoginActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         if(MyApplication.loginState)
-            loginSuccess();
+            this.finish();
     }
 
     public void loginSuccess(){
