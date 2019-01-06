@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.asyncNetTask.RegisterTask;
+import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.MyApplication;
 
 public class RegisterActivity extends BaseActivity implements View.OnClickListener{
@@ -34,6 +35,12 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         reg_btn.setOnClickListener(this);
         reg_userName = findViewById(R.id.reg_user_name);
         reg_password = findViewById(R.id.reg_password);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonCache.CurrentActivity.setActivityNum(3);
     }
 
     public static void actionStart(Context context){

@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.asyncNetTask.RequestMyPostTask;
+import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.common.PostListManager;
@@ -79,6 +80,16 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
         personalPageRecyclerView.setLayoutManager(layoutManager);
         adapter = new PostAdapter(this, postList, true);
         personalPageRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        CommonCache.CurrentActivity.setActivityNum(8);
+        if(PostListManager.myPostListChanged){
+            this.adapter.notifyDataSetChanged();
+            PostListManager.myPostListChanged = false;
+        }
     }
 
     private void initPosts(){

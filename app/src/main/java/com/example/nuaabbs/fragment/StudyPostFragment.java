@@ -37,6 +37,15 @@ public class StudyPostFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(PostListManager.studyPostListChanged){
+            this.postAdapter.notifyDataSetChanged();
+            PostListManager.studyPostListChanged = false;
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_study_post, container, false);

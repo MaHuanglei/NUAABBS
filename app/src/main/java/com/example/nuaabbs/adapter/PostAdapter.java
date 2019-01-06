@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.action.PostContentActivity;
 import com.example.nuaabbs.asyncNetTask.PostRelatedActionTask;
@@ -21,6 +22,7 @@ import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.object.Comment;
 import com.example.nuaabbs.object.Post;
+import com.example.nuaabbs.util.HelperUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,12 +92,25 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (mContext == null) {
-            mContext = parent.getContext();
-        }
-        View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, parent, false);
+
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.post_item, parent, false);
 
         final ViewHolder holder = new ViewHolder(view);
+
+        holder.postView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "you clicked PostView", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        holder.sender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         holder.postInfo.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -170,6 +185,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         Post post = postList.get(position);
 
+        Glide.with(mContext).load(HelperUtil.getRandomHeadID()).into(holder.headPortrait);
         holder.sender.setText(post.getPoster());
         holder.time.setText(post.getDateStr());
         if(showLabel) holder.label.setText(post.getLabel());
@@ -199,27 +215,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     public void DealFail(String reqCode, String param){
-        if(reqCode.equals(Constant.REQCODE_COMMENT)){
-            int postId = Constant.gson.fromJson(param, Comment.class).getFollowPostID();
-            for (Post post: postList){
-                if(postId == post.getPostID()){
-                    post.deleteLastComment();
-                    post.decCommentNum();
-                    break;
-                }
-            }
-        }else {
-            boolean thumb_up = true;
-            if(reqCode.equals(Constant.REQCODE_COMMENT))
-                    thumb_up = false;
 
-            for (Post post: postList){
-                if(param.equals(post.getPostID())){
-                    if(thumb_up) post.decThumb_upNum();
-                    else post.decViewNum();
-                    break;
-                }
-            }
-        }
     }
 }

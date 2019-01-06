@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.asyncNetTask.CreatePostTask;
+import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.Post;
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 public class CreatePostActivity extends BaseActivity implements View.OnClickListener{
     EditText postContent;
     Post newPost;
+    long lastRequestTime = 0l;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,12 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
 
         postContent = findViewById(R.id.create_post_content);
         findViewById(R.id.action_create).setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonCache.CurrentActivity.setActivityNum(12);
     }
 
     public static void actionStart(Context context){
@@ -60,11 +68,20 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.action_create:
-                if(TextUtils.isEmpty(postContent.getText().toString())){
-                    Toast.makeText(this, "帖子内容不能为空！", Toast.LENGTH_SHORT).show();
-                    break;
+                boolean timeAllow = false;
+                if(lastRequestTime == 0)timeAllow = true;
+                else{
+                    if(System.currentTimeMillis() - lastRequestTime > 2000)
+                        timeAllow = true;
                 }
-                CreatePost();
+                if(timeAllow){
+                    if(TextUtils.isEmpty(postContent.getText().toString())){
+                        Toast.makeText(this, "帖子内容不能为空！", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    lastRequestTime = System.currentTimeMillis();
+                    CreatePost();
+                }
                 break;
             default:
         }
@@ -102,11 +119,12 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
     public void CreateSuccess(int postID){
 
         newPost.setPostID(postID);
+
         if(newPost.getLabel().equals("学习"))
-            PostListManager.studyPostList.add(0, newPost);
-        else PostListManager.lifePostList.add(0, newPost);
-        PostListManager.myPostList.add(0, newPost);
-        PostListManager.hotPostList.add(newPost);
+            PostListManager.addNewStudyPost(newPost);
+        else PostListManager.addNewLifePost(newPost);
+        PostListManager.addNewMyPost(newPost);
+        PostListManager.addNewHotPost(newPost);
 
         this.finish();
     }

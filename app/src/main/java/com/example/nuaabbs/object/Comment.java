@@ -14,6 +14,7 @@ public class Comment implements Serializable {
     private String time;
     private boolean isDependent;
     private int followCommentID;
+    private int belongCommentID;
     private String commentInfo;
 
     public Comment(){
@@ -25,6 +26,7 @@ public class Comment implements Serializable {
 
         isDependent = true;
         followCommentID = 0;
+        belongCommentID = 0;
     }
 
     public int getCommentID() {
@@ -81,6 +83,14 @@ public class Comment implements Serializable {
 
     public void setFollowCommentID(int followCommentID) {
         this.followCommentID = followCommentID;
+    }
+
+    public int getBelongCommentID() {
+        return belongCommentID;
+    }
+
+    public void setBelongCommentID(int belongCommentID) {
+        this.belongCommentID = belongCommentID;
     }
 
     public String getCommentInfo() {

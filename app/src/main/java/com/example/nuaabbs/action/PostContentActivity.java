@@ -8,17 +8,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.nuaabbs.R;
-import com.example.nuaabbs.adapter.CommentAdapter;
+import com.example.nuaabbs.adapter.CommentPlusAdapter;
+import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.object.Post;
 
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class PostContentActivity extends BaseActivity {
+public class PostContentActivity extends BaseActivity implements View.OnClickListener{
 
     Post post;
 
@@ -69,10 +71,27 @@ public class PostContentActivity extends BaseActivity {
         thumb_up_Num.setText(post.getThumb_upNum()+"");
         commentNum.setText(post.getCommentNum()+"");
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        commentView.setLayoutManager(layoutManager);
-        CommentAdapter commentAdapter = new CommentAdapter(this, post.getComments(), post.getPostID());
-        commentView.setAdapter(commentAdapter);
+        if(post.getComments().size() > 0){
+            commentView.setVisibility(View.VISIBLE);
+
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            commentView.setLayoutManager(layoutManager);
+            commentView.setNestedScrollingEnabled(false);
+            CommentPlusAdapter adapter = new CommentPlusAdapter(this, post.getComments());
+            commentView.setAdapter(adapter);
+        }
+
+        headPortrait.setOnClickListener(this);
+        sender.setOnClickListener(this);
+        postInfo.setOnClickListener(this);
+        thumb_up.setOnClickListener(this);
+        comment.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonCache.CurrentActivity.setActivityNum(11);
     }
 
     public static void actionStart(Context context, Post post){
@@ -99,6 +118,22 @@ public class PostContentActivity extends BaseActivity {
             return true;
         }else {
             return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.post_content_head:
+                break;
+            case R.id.post_content_sender:
+                break;
+            case R.id.post_content_thumb_up:
+                break;
+            case R.id.post_content_comment:
+                break;
+            default:
+                break;
         }
     }
 }

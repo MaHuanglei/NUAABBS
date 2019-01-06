@@ -29,6 +29,7 @@ import com.example.nuaabbs.action.SearchActivity;
 import com.example.nuaabbs.action.SystemSettingActivity;
 import com.example.nuaabbs.adapter.MyPageFragmentAdapter;
 import com.example.nuaabbs.asyncNetTask.LogoutTask;
+import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.fragment.BaseFragment;
 import com.example.nuaabbs.fragment.HotPostFragment;
@@ -50,6 +51,7 @@ public class MainActivity extends BaseActivity
     NavigationView navigationView;
     Menu menu;
 
+    FloatingActionButton fab;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private String[] mTitle = {"热点","生活","学习"};
@@ -63,7 +65,7 @@ public class MainActivity extends BaseActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -113,6 +115,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        CommonCache.CurrentActivity.setActivityNum(1);
         RefreshNavigationView();
     }
 
@@ -124,6 +127,16 @@ public class MainActivity extends BaseActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    public void HideFAB(){
+        if(fab != null) {
+            fab.hide();
+        }
+    }
+
+    public void ShowFAB(){
+        if(fab != null) fab.show();
     }
 
     @Override

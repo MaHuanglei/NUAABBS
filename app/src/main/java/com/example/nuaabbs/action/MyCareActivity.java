@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import com.example.nuaabbs.R;
+import com.example.nuaabbs.common.CommonCache;
 
 public class MyCareActivity extends BaseActivity {
 
@@ -17,6 +18,12 @@ public class MyCareActivity extends BaseActivity {
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonCache.CurrentActivity.setActivityNum(6);
     }
 
     public static void actionStart(Context context){

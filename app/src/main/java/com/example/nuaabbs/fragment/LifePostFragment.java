@@ -36,6 +36,15 @@ public class LifePostFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(PostListManager.lifePostListChanged){
+            this.postAdapter.notifyDataSetChanged();
+            PostListManager.lifePostListChanged = false;
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_life_post, container, false);

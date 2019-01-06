@@ -14,9 +14,9 @@ import com.example.nuaabbs.asyncNetTask.PostRelatedActionTask;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
-import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.Comment;
 import com.example.nuaabbs.util.HelperUtil;
+import com.example.nuaabbs.util.LogUtil;
 import com.example.nuaabbs.util.PopUpEditWindow;
 
 import java.util.List;
@@ -28,6 +28,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     PopUpEditWindow window;
     private int clickedCommentID = 0;
+    private int belongCommentID = 0;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         View commentView;
@@ -74,10 +75,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     return;
                 }
 
-                String commentUserName = commentList.get(holder.getAdapterPosition()).getCommentUser();
-                clickedCommentID = commentList.get(holder.getAdapterPosition()).getCommentID();
+                Comment comment = commentList.get(holder.getAdapterPosition());
+                clickedCommentID = comment.getCommentID();
+                belongCommentID = comment.getBelongCommentID();
+
                 window = new PopUpEditWindow(mContext, holder.callbackView,
-                        "回复 " + commentUserName);
+                        "回复 " + comment.getCommentUser(), holder.commentView);
                 window.show();
             }
         });
@@ -104,6 +107,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 replyComment.setCommentInfo(window.getInputContent());
                 replyComment.setDependent(false);
                 replyComment.setFollowCommentID(clickedCommentID);
+                replyComment.setBelongCommentID(belongCommentID);
 
                 HelperUtil.InsertComment(replyComment, commentList);
                 CommentAdapter.this.notifyDataSetChanged();
@@ -119,11 +123,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Comment comment = commentList.get(position);
+        final Comment comment = commentList.get(position);
         if(comment.isDependent()){
             holder.commentUser.setText(comment.getCommentUser() + " : ");
-            holder.responseLabel.setVisibility(View.GONE);
-            holder.sendToUser.setVisibility(View.GONE);
         }else{
             holder.commentUser.setText(comment.getCommentUser());
             holder.responseLabel.setVisibility(View.VISIBLE);
@@ -131,7 +133,29 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             holder.sendToUser.setText(GetFollowCommentUser(comment.getFollowCommentID()) + " : ");
         }
 
-        holder.commentInfo.setText(comment.getCommentInfo());
+        final String info = comment.getCommentInfo();
+        holder.commentInfo.setText(info);
+
+        /*以下处理过程意在：当评论内容一行显示不完时，获取被省略的评论内容并显示在第二评论显示区，以获得更好的显示效果*/
+        final TextView commentInfo = holder.commentInfo;
+        final TextView commentInfoPlus = holder.commentInfoPlus;
+        commentInfo.post(new Runnable() {
+            @Override
+            public void run() {
+                LogUtil.d("getEllipsisCount","start");
+                int ellipsisCount = commentInfo.getLayout().getEllipsisCount(0);
+                if(ellipsisCount > 0){
+                    LogUtil.d("ellipsisCount = ", ""+ellipsisCount);
+                    int ellipsisIndex = info.length()-ellipsisCount+1;
+                    commentInfo.setText(info.substring(0, ellipsisIndex));
+                    commentInfoPlus.setText(info.substring(ellipsisIndex));
+                    commentInfo.setVisibility(View.VISIBLE);
+                    commentInfoPlus.setVisibility(View.VISIBLE);
+                }else{
+                    commentInfo.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.asyncNetTask.UpdateUserDetailTask;
+import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.util.LogUtil;
@@ -65,6 +66,12 @@ public class ChangeUserDetailActivity extends BaseActivity
         birthday.setOnClickListener(this);
         birthday.setOnFocusChangeListener(this);
         birthday.setInputType(InputType.TYPE_NULL);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonCache.CurrentActivity.setActivityNum(10);
     }
 
     public static void actionStart(Context context){

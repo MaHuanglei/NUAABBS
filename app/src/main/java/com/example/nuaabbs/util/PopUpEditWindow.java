@@ -1,22 +1,28 @@
 package com.example.nuaabbs.util;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.example.nuaabbs.MainActivity;
 import com.example.nuaabbs.R;
+import com.example.nuaabbs.common.CommonCache;
 
 
 public class PopUpEditWindow {
+
     Context mContext;
     View callBackView;
+    View dropView;
     String param;
 
     PopupWindow popupWindow;
@@ -24,10 +30,11 @@ public class PopUpEditWindow {
 
     String inputContent = "$#!cancel!#$";
 
-    public PopUpEditWindow(Context context, View callBackView, String param){
+    public PopUpEditWindow(Context context, View callBackView, String param, View dropView){
         this.mContext = context;
         this.callBackView = callBackView;
         this.param = param;
+        this.dropView = dropView;
     }
 
     public void show(){
@@ -49,6 +56,8 @@ public class PopUpEditWindow {
         popupWindow = new PopupWindow(view, LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT, false);
 
+        popupWindow.setBackgroundDrawable(new BitmapDrawable());
+
         popupWindow.setTouchable(true);
         popupWindow.setTouchInterceptor(new View.OnTouchListener() {
             @Override
@@ -62,26 +71,27 @@ public class PopUpEditWindow {
 
         popupWindow.setFocusable(true);
         popupWindow.setOutsideTouchable(true);
-
-
-        //popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popuwindow_white_bg));
+        if(CommonCache.CurrentActivity.getActivityNum() == 0)
+            ((MainActivity)mContext).HideFAB();
 
 
         // 设置弹出窗体需要软键盘
-        popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        //popupWindow.setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
+        InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+
         // 再设置模式，和Activity的一样，覆盖，调整大小。
         popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-        //popupWindow.setBackgroundDrawable(new ColorDrawable(0x000000));
         popupWindow.showAtLocation(view, Gravity.BOTTOM, 0, 0);
+        //popupWindow.showAsDropDown(dropView);
 
-        //popupInputMethodWindow();
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
+                if(CommonCache.CurrentActivity.getActivityNum() == 1)
+                    ((MainActivity)mContext).ShowFAB();
             }
         });
+
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

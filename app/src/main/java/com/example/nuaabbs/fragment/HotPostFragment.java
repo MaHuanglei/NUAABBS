@@ -35,6 +35,15 @@ public class HotPostFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(PostListManager.hotPostListChanged){
+            this.postAdapter.notifyDataSetChanged();
+            PostListManager.hotPostListChanged = false;
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hot_post, container, false);

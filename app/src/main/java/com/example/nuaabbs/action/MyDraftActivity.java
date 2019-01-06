@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nuaabbs.R;
+import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.util.PopUpEditWindow;
 
 public class MyDraftActivity extends BaseActivity{
@@ -30,6 +31,12 @@ public class MyDraftActivity extends BaseActivity{
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonCache.CurrentActivity.setActivityNum(5);
     }
 
     public static void actionStart(Context context){

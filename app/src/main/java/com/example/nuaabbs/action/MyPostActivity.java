@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.asyncNetTask.RequestMyPostTask;
+import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.Post;
@@ -48,6 +49,12 @@ public class MyPostActivity extends BaseActivity {
         myPostRecyclerView.setLayoutManager(layoutManager);
         adapter = new PostAdapter(this, postList, true);
         myPostRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonCache.CurrentActivity.setActivityNum(4);
     }
 
     @Override

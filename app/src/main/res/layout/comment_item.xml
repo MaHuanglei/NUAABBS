@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/textview_selector">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,6 +18,7 @@
             android:id="@+id/comment_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/textview_selector"
             android:maxWidth="150dp"
             android:singleLine="true"
             android:textColor="@color/colorLightBlue"
@@ -27,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:textSize="14dp"
             android:text=" 回复 "/>
 
@@ -35,23 +37,28 @@
             android:id="@+id/send_to_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/textview_selector"
             android:maxWidth="150dp"
             android:singleLine="true"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:textColor="@color/colorLightBlue"/>
 
         <TextView
             android:id="@+id/comment_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textSize="14dp"/>
     </LinearLayout>
 
     <TextView
         android:id="@+id/comment_info_plus"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
         android:textSize="14dp"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
 </LinearLayout>

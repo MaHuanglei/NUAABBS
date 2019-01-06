@@ -7,6 +7,11 @@ import java.util.List;
 
 public class PostListManager {
 
+    public static boolean myPostListChanged = false;
+    public static boolean hotPostListChanged = false;
+    public static boolean studyPostListChanged = false;
+    public static boolean lifePostListChanged = false;
+
     public static List<Post> myPostList = new ArrayList<>();
     public static List<Post> hotPostList = new ArrayList<>();
     public static List<Post> studyPostList = new ArrayList<>();
@@ -17,46 +22,92 @@ public class PostListManager {
     }
 
     public static void refreshMyPostList(List<Post> newPostList){
-        refreshPostList(newPostList, myPostList);
-    }
-
-    public static void refreshHotPostList(List<Post> newPostList){
-        refreshPostList(newPostList, hotPostList);
+        refreshPostListFromTime(newPostList, myPostList);
     }
 
     public static void refreshLifePostList(List<Post> newPostList){
-        refreshPostList(newPostList, lifePostList);
+        refreshPostListFromTime(newPostList, lifePostList);
     }
 
     public static void refreshStudyPostList(List<Post> newPostList){
-        refreshPostList(newPostList, studyPostList);
+        refreshPostListFromTime(newPostList, studyPostList);
     }
 
-    public static void refreshPostList(List<Post> newPostList, List<Post> oldPostList){
-        int curIndex = 0;
-        int postIndex;
-        for(Post newPost : newPostList){
-            postIndex = findPost(newPost, oldPostList);
-            if(postIndex != -1){
-                oldPostList.remove(postIndex);
-                oldPostList.add(postIndex, newPost);
-            }else{
-                oldPostList.add(curIndex, newPost);
-                ++curIndex;
-            }
+    public static void refreshHotPostList(List<Post> newPostList){
+        int index;
+        for(Post newPost:newPostList){
+            index = findPost(newPost, hotPostList);
+            if(index != -1) hotPostList.remove(index);
+
+            InsertPostFromHotDegree(newPost, hotPostList);
         }
     }
 
-    public static int findPost(Post newPost, List<Post> postList){
+    public static void addNewMyPost(Post newPost){
+        myPostList.add(0, newPost);
+        myPostListChanged = true;
+    }
+
+    public static void addNewLifePost(Post newPost){
+        lifePostList.add(0, newPost);
+        lifePostListChanged = true;
+    }
+
+    public static void addNewStudyPost(Post newPost){
+        studyPostList.add(0, newPost);
+        studyPostListChanged = true;
+    }
+
+    public static void addNewHotPost(Post newPost){
+        InsertPostFromHotDegree(newPost, hotPostList);
+        hotPostListChanged = true;
+    }
+
+    private static void refreshPostListFromTime(List<Post> newPostList, List<Post> oldPostList){
+        int index;
+        for(Post newPost:newPostList){
+            index = findPost(newPost, oldPostList);
+            if(index != -1) oldPostList.remove(index);
+
+            InsertPostFromTime(newPost, oldPostList);
+        }
+    }
+
+    private static int findPost(Post newPost, List<Post> postList){
         int index = 0;
         int id = newPost.getPostID();
         for(Post post:postList){
             if(post.getPostID() == id){
                 return index;
             }
-
             ++index;
         }
         return -1;
+    }
+
+    private static void InsertPostFromTime(Post newPost, List<Post> postList){
+        int newPostID = newPost.getPostID();
+        int index = 0;
+        for(Post post: postList){
+            if(newPostID > post.getPostID()){
+                postList.add(index, newPost);
+                return;
+            }
+            ++index;
+        }
+        postList.add(newPost);
+    }
+
+    private static void InsertPostFromHotDegree(Post newPost, List<Post> postList){
+        int newPostHotDegree = newPost.getHotDegree();
+        int index = 0;
+        for(Post post: postList){
+            if(newPostHotDegree > post.getHotDegree()){
+                postList.add(index, newPost);
+                return;
+            }
+            ++index;
+        }
+        postList.add(newPost);
     }
 }

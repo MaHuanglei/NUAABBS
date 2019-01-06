@@ -31,8 +31,7 @@
                     android:id="@+id/post_head"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:scaleType="centerCrop"
-                    android:src="@mipmap/ic_launcher_round" />
+                    android:scaleType="centerCrop" />
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -48,13 +47,12 @@
                             android:id="@+id/post_sender"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:background="@drawable/textview_selector"
                             android:textColor="@color/colorBlack"
                             android:maxEms="8"
                             android:singleLine="true"
                             android:ellipsize="marquee"
                             android:marqueeRepeatLimit="marquee_forever"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
                             android:textSize="16sp"/>
 
                         <TextView
@@ -153,11 +151,11 @@
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:minHeight="27dp"
+                    android:maxHeight="150dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:background="@color/colorGray3"
+                    android:background="@drawable/round_edittext"
+                    android:padding="5dp"
                     android:textSize="15dp"
                     android:hint="评论"
                     android:visibility="visible" />
