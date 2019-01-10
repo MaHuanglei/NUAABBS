@@ -148,10 +148,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             holder.sendToUser.setText(GetFollowCommentUser(comment.getFollowCommentID()) + " : ");
         }
 
+        holder.commentInfo.setText(comment.getCommentInfo());
+        /*
         final String info = comment.getCommentInfo();
         holder.commentInfo.setText(info);
 
-        /*以下处理过程意在：当评论内容一行显示不完时，获取被省略的评论内容并显示在第二评论显示区，以获得更好的显示效果*/
+        /*以下处理过程意在：当评论内容一行显示不完时，获取被省略的评论内容并显示在第二评论显示区，以获得更好的显示效果
         final TextView commentInfo = holder.commentInfo;
         final TextView commentInfoPlus = holder.commentInfoPlus;
         commentInfo.post(new Runnable() {
@@ -170,7 +172,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     commentInfo.setVisibility(View.VISIBLE);
                 }
             }
-        });
+        });*/
     }
 
     @Override

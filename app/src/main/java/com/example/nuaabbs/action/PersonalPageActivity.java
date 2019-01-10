@@ -65,7 +65,7 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
         collapsingToolbar.setTitle(MyApplication.userInfo.getUserName());
 
         if(MyApplication.postListManager.getMyPostList().isEmpty()){
-            MyApplication.postListManager.refreshMyPostList(Constant.PersonalPageActivityNum);
+            MyApplication.postListManager.refreshMyPostList(Constant.PersonalPageActivityRequestTask);
         }
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

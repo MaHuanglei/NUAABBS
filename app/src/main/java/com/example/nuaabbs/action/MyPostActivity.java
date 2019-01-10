@@ -35,12 +35,12 @@ public class MyPostActivity extends BaseActivity {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                MyApplication.postListManager.refreshMyPostList(Constant.MyPostActivityNum);
+                MyApplication.postListManager.refreshMyPostList(Constant.MyPostActivityRequestTask);
             }
         });
 
         if(MyApplication.postListManager.getMyPostList().isEmpty()){
-            MyApplication.postListManager.refreshMyPostList(Constant.MyPostActivityNum);
+            MyApplication.postListManager.refreshMyPostList(Constant.MyPostActivityRequestTask);
             swipeRefresh.setRefreshing(true);
         }
 
@@ -55,6 +55,7 @@ public class MyPostActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        closeRefreshBar(false);
         CommonCache.CurrentActivity.setCurrentActivity(Constant.MyPostActivityNum, this);
     }
 

@@ -80,4 +80,10 @@ public class Constant {
 
     public static int REQUEST_SUCCESS = 1;
     public static int REQUEST_FAIL = 2;
+
+    public static int HotPostFragmentRequestTask = 1;
+    public static int LifePostFragmentRequestTask = 2;
+    public static int StudyPostFragmentRequestTask = 3;
+    public static int MyPostActivityRequestTask = 4;
+    public static int PersonalPageActivityRequestTask = 5;
 }
