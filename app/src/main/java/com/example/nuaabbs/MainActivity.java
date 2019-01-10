@@ -1,6 +1,8 @@
 package com.example.nuaabbs;
 
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -13,6 +15,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +33,7 @@ import com.example.nuaabbs.action.SystemSettingActivity;
 import com.example.nuaabbs.adapter.MyPageFragmentAdapter;
 import com.example.nuaabbs.asyncNetTask.LogoutTask;
 import com.example.nuaabbs.common.CommonCache;
+import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.fragment.BaseFragment;
 import com.example.nuaabbs.fragment.HotPostFragment;
@@ -48,6 +52,7 @@ public class MainActivity extends BaseActivity
     TextView loginStateTextView;
     TextView idiograph;
 
+    DrawerLayout drawer;
     NavigationView navigationView;
     Menu menu;
 
@@ -56,7 +61,6 @@ public class MainActivity extends BaseActivity
     private ViewPager mViewPager;
     private String[] mTitle = {"热点","生活","学习"};
     private List<BaseFragment> mFragmentList = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +72,7 @@ public class MainActivity extends BaseActivity
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -88,18 +92,38 @@ public class MainActivity extends BaseActivity
 
         initData();
         mTabLayout = findViewById(R.id.post_tab);
-        if(mTabLayout == null){
-            LogUtil.e("MainActivity", "tabLayout = null");
-        }
-
-
         mViewPager = findViewById(R.id.post_pager);
         MyPageFragmentAdapter mAdapter =
                 new MyPageFragmentAdapter(getSupportFragmentManager(), mFragmentList, mTitle);
-
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+
+        getWindow().getDecorView().post(new Runnable() {
+            @Override
+            public void run() {
+                View myLayout = getWindow().getDecorView();
+                int screenHeight = myLayout.getRootView().getHeight();
+                MyApplication.setScreenHeight(screenHeight);
+                //LogUtil.i("onCreate MainActivity", "screenHeight = "+screenHeight);
+            }
+        });
+
+        drawer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if(CommonCache.AdjustHeight.isIsNeedAdjust()){
+                    CommonCache.AdjustHeight.setIsNeedAdjust(false);
+
+                    int distance =
+                            getActivityBottomDistanceFromScreenBottom();
+                    int smoothDistance = distance + 140
+                            - (MyApplication.getScreenHeight() - CommonCache.AdjustHeight.getAdjustHeight());
+                    smoothScrollView(smoothDistance);
+                    LogUtil.d("", "Now need scroll");
+                }
+            }
+        });
     }
 
     private void initData()
@@ -115,7 +139,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(1);
+        CommonCache.CurrentActivity.setActivityNum(Constant.MainActivityNum);
         RefreshNavigationView();
     }
 
@@ -237,6 +261,25 @@ public class MainActivity extends BaseActivity
             return true;
         }else {
             return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    public int getActivityBottomDistanceFromScreenBottom(){
+        // get activity bottom
+        Rect r = new Rect();
+        drawer.getWindowVisibleDisplayFrame(r);
+        return (MyApplication.getScreenHeight() - r.bottom);
+    }
+
+    public void smoothScrollView(int distance){
+        int position = mTabLayout.getSelectedTabPosition();
+
+        if(position == 0){
+            ((HotPostFragment)mFragmentList.get(0)).SmoothRecycle(distance);
+        }else if(position == 1){
+            ((StudyPostFragment)mFragmentList.get(1)).SmoothRecycle(distance);
+        }else if(position == 2){
+            ((LifePostFragment)mFragmentList.get(2)).SmoothRecycle(distance);
         }
     }
 }

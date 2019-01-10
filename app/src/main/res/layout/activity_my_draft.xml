@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_draft_parent"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".action.MyDraftActivity">
 
     <TextView
-        android:id="@+id/comment"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center"
         android:text="Wait for later update !"/>
 
-    <TextView
-        android:id="@+id/showContent"
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:layout_constraintTop_toBottomOf="@+id/comment"
-        android:gravity="center" />
+        android:layout_height="wrap_content"
+        android:maxHeight="200dp"/>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

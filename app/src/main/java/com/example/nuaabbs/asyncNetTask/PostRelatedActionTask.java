@@ -46,7 +46,7 @@ public class PostRelatedActionTask extends AsyncTask<String, String, Boolean> {
         if(resCode.equals(Constant.RESCODE_SUCCESS)){
             if(reqCode.equals(Constant.REQCODE_COMMENT)){
                 int id = Integer.parseInt(commonResponse.getResParam());
-                CommonCache.setNewCommentID(id);
+                CommonCache.NewComment.setNewCommentID(id);
             }
         }else{
             OkHttpUtil.stdDealResult(context, "PostRelatedAction");

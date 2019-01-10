@@ -15,6 +15,7 @@ import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.asyncNetTask.RequestMyPostTask;
 import com.example.nuaabbs.common.CommonCache;
+import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.Post;
@@ -54,7 +55,7 @@ public class MyPostActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(4);
+        CommonCache.CurrentActivity.setActivityNum(Constant.MyPostActivityNum);
     }
 
     @Override

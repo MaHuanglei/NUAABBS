@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.asyncNetTask.LoginTask;
 import com.example.nuaabbs.common.CommonCache;
+import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 
 public class LoginActivity extends BaseActivity
@@ -77,7 +78,7 @@ public class LoginActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(2);
+        CommonCache.CurrentActivity.setActivityNum(Constant.LoginActivityNum);
         if(MyApplication.loginState)
             this.finish();
     }

@@ -71,7 +71,7 @@ public class ChangeUserDetailActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(10);
+        CommonCache.CurrentActivity.setActivityNum(Constant.ChangeUserDetailActivityNum);
     }
 
     public static void actionStart(Context context){

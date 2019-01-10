@@ -27,8 +27,7 @@
                     android:id="@+id/post_content_head"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:scaleType="centerCrop"
-                    android:src="@mipmap/ic_launcher_round" />
+                    android:scaleType="centerCrop"/>
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -44,6 +43,7 @@
                             android:id="@+id/post_content_sender"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:minWidth="50dp"
                             android:background="@drawable/textview_selector"
                             android:textColor="@color/colorBlack"
                             android:maxEms="8"
@@ -74,7 +74,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/textview_selector"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
                 android:layout_margin="5dp"
                 android:textColor="@color/colorBlack"
                 android:textSize="16sp" />
@@ -130,12 +131,15 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="@color/colorGray2"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/post_content_comment_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:visibility="gone"/>
@@ -143,7 +147,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginTop="8dp"
                 android:background="@color/colorGray1"
                 android:gravity="center"
                 android:textColor="@color/colorGray3"

@@ -12,10 +12,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.CommentPlusAdapter;
 import com.example.nuaabbs.common.CommonCache;
+import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.object.Post;
+import com.example.nuaabbs.util.HelperUtil;
 
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -62,6 +65,7 @@ public class PostContentActivity extends BaseActivity implements View.OnClickLis
 
         post = (Post)getIntent().getSerializableExtra("post_data");
 
+        Glide.with(this).load(HelperUtil.getRandomHeadID()).into(headPortrait);
         sender.setText(post.getPoster());
         time.setText(post.getDateStr());
         label.setText(post.getLabel());
@@ -91,7 +95,7 @@ public class PostContentActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(11);
+        CommonCache.CurrentActivity.setActivityNum(Constant.PostContentActivityNum);
     }
 
     public static void actionStart(Context context, Post post){

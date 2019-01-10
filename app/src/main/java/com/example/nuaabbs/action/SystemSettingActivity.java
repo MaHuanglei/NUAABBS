@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.common.CommonCache;
+import com.example.nuaabbs.common.Constant;
 
 public class SystemSettingActivity extends BaseActivity {
 
@@ -23,7 +24,7 @@ public class SystemSettingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(14);
+        CommonCache.CurrentActivity.setActivityNum(Constant.SystemSettingActivityNum);
     }
 
     public static void actionStart(Context context){

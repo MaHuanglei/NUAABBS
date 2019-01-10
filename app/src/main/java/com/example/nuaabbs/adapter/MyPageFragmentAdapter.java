@@ -32,7 +32,7 @@ public class MyPageFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         String tmp = titles[position];
-        LogUtil.d("MainActivity TabLayout", position + "  " + tmp);
+        //LogUtil.d("MainActivity TabLayout", position + "  " + tmp);
         return tmp; // 在这里返回每个tab的名字
     }
 }

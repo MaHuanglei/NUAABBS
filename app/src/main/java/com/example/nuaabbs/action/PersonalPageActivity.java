@@ -85,7 +85,7 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(8);
+        CommonCache.CurrentActivity.setActivityNum(Constant.PersonalPageActivityNum);
         if(PostListManager.myPostListChanged){
             this.adapter.notifyDataSetChanged();
             PostListManager.myPostListChanged = false;

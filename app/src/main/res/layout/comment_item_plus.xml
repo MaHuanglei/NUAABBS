@@ -20,6 +20,7 @@
             android:id="@+id/comment_detail_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="80dp"
             android:background="@drawable/textview_selector"
             android:textColor="@color/colorBlack"
             android:maxEms="10"

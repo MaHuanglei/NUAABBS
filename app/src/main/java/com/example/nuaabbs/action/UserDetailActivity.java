@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.common.CommonCache;
+import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.util.LogUtil;
 
@@ -55,7 +56,7 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
             userBirthday.setText(MyApplication.userInfo.getBirthday().toString());
         userIdiograph.setText(MyApplication.userInfo.getIdioGraph());
 
-        CommonCache.CurrentActivity.setActivityNum(9);
+        CommonCache.CurrentActivity.setActivityNum(Constant.UserDetailActivityNum);
         super.onResume();
     }
 

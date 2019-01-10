@@ -23,6 +23,8 @@ import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.object.Comment;
 import com.example.nuaabbs.object.Post;
 import com.example.nuaabbs.util.HelperUtil;
+import com.example.nuaabbs.util.LogUtil;
+import com.example.nuaabbs.util.PopUpEditWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +36,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private static final String TAG = "PostAdapter";
     private Context mContext;
     private List<Post> postList;
-    private List<Comment> commentList;
     private boolean showLabel;
+
+    private PopUpEditWindow window;
 
     public PostAdapter() {
     }
@@ -58,8 +61,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         RecyclerView commentView;
 
-        EditText commentEdit;
-        Button sendComment;
+        TextView addComment;
+        View callbackView;
 
         public ViewHolder(View view) {
             super(view);
@@ -79,8 +82,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             comment = view.findViewById(R.id.comment);
             commentNum = view.findViewById(R.id.comment_num);
 
-            commentEdit = view.findViewById(R.id.comment_edit);
-            sendComment = view.findViewById(R.id.send_comment);
+            addComment = view.findViewById(R.id.add_comment);
+            callbackView = view.findViewById(R.id.add_comment_callback_view);
+        }
+
+        public void updateCommentNum(int num){
+            commentNum.setText(""+num);
         }
     }
 
@@ -120,9 +127,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 post.addViewNum();
                 post.calculateHotDegree();
                 holder.viewNum.setText(Integer.toString(post.getViewNum()));
-                DealPostRelatedAction(Constant.REQCODE_VIEW, post.getPostID()+"");
-
                 PostContentActivity.actionStart(mContext, post);
+
+                DealPostRelatedAction(Constant.REQCODE_VIEW, post.getPostID()+"");
             }
         });
 
@@ -141,40 +148,47 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.comment.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                holder.commentEdit.requestFocus();
-                InputMethodManager imm = (InputMethodManager)
-                        mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(holder.commentEdit,0);
+                holder.addComment.performClick();
             }
         });
 
-        holder.sendComment.setOnClickListener(new View.OnClickListener() {
+        holder.addComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(MyApplication.loginState){
-                    String commentInfo = holder.commentEdit.getText().toString();
-                    if(!commentInfo.isEmpty()){
-                        int position = holder.getAdapterPosition();
-                        Post post = postList.get(position);
-                        post.addCommentNum();
-                        post.calculateHotDegree();
-                        holder.commentNum.setText(Integer.toString(post.getCommentNum()));
-
-                        Comment comment = CommonCache.getNewComment();
-                        comment.setFollowPostID(post.getPostID());
-                        comment.setCommentInfo(commentInfo);
-
-                        post.addComments(comment);
-                        holder.commentView.getAdapter().notifyDataSetChanged();
-                        holder.commentEdit.getText().clear();
-
-                        String json = Constant.gson.toJson(comment);
-                        DealPostRelatedAction(Constant.REQCODE_COMMENT, json);
-                    }
-                }else{
-                    Toast.makeText(mContext, "您还未登录！", Toast.LENGTH_LONG).show();
-                    holder.commentEdit.getText().clear();
+                if(!MyApplication.loginState){
+                    Toast.makeText(mContext, "你还没有登录，无法评论哦！", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                int[] location = new int[2];
+                v.getLocationOnScreen(location);
+                LogUtil.d("add comment view", "location top = "+location[1]);
+
+                if(CommonCache.CurrentActivity.getActivityNum() == Constant.MainActivityNum){
+                    CommonCache.AdjustHeight.setAdjustParam(true, location[1]-10);
+                }
+
+                ShowAddCommentWindow(holder.callbackView);
+            }
+        });
+
+        holder.callbackView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Post post = postList.get(holder.getAdapterPosition());
+
+                Comment comment = CommonCache.NewComment.getNewComment();
+                comment.setFollowPostID(post.getPostID());
+                comment.setCommentInfo(window.getInputContent());
+
+                post.addCommentNum();
+                post.addComments(comment);
+                post.calculateHotDegree();
+                holder.updateCommentNum(post.getCommentNum());
+                holder.commentView.getAdapter().notifyDataSetChanged();
+
+                String param = Constant.gson.toJson(comment);
+                DealPostRelatedAction(Constant.REQCODE_COMMENT, param);
             }
         });
 
@@ -195,12 +209,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.thumb_up_Num.setText(post.getThumb_upNum()+"");
         holder.commentNum.setText(post.getCommentNum()+"");
 
-        commentList = post.getComments();
-        if(commentList == null)
-            commentList = new ArrayList<>();
+        if(post.getComments() == null)
+            post.setComments(new ArrayList<Comment>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         holder.commentView.setLayoutManager(layoutManager);
-        CommentAdapter commentAdapter = new CommentAdapter(mContext, commentList, post.getPostID());
+        CommentAdapter commentAdapter = new CommentAdapter(mContext, post, holder);
         holder.commentView.setAdapter(commentAdapter);
     }
 
@@ -216,5 +229,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     public void DealFail(String reqCode, String param){
 
+    }
+
+    private void ShowAddCommentWindow(View callbackView){
+        final View view = LayoutInflater.from(mContext).inflate(R.layout.comment_popupwindow, null);
+        window = new PopUpEditWindow(mContext, view, callbackView,
+                "说点什么吧...");
+        window.show();
     }
 }

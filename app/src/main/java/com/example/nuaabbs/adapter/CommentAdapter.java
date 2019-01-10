@@ -15,16 +15,16 @@ import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.object.Comment;
+import com.example.nuaabbs.object.Post;
 import com.example.nuaabbs.util.HelperUtil;
 import com.example.nuaabbs.util.LogUtil;
 import com.example.nuaabbs.util.PopUpEditWindow;
 
-import java.util.List;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder>{
-    private List<Comment> commentList;
     private Context mContext;
-    private int postID;
+    private Post post;
+    private PostAdapter.ViewHolder postViewHolder;
 
     PopUpEditWindow window;
     private int clickedCommentID = 0;
@@ -55,10 +55,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         }
     }
 
-    public CommentAdapter(Context mContext, List<Comment> commentList, int postID){
+    public CommentAdapter(Context mContext, Post post, PostAdapter.ViewHolder postViewHolder){
         this.mContext = mContext;
-        this.commentList = commentList;
-        this.postID = postID;
+        this.post = post;
+        this.postViewHolder = postViewHolder;
     }
 
     @NonNull
@@ -75,13 +75,24 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     return;
                 }
 
-                Comment comment = commentList.get(holder.getAdapterPosition());
+                Comment comment = post.getComments().get(holder.getAdapterPosition());
                 clickedCommentID = comment.getCommentID();
                 belongCommentID = comment.getBelongCommentID();
 
-                window = new PopUpEditWindow(mContext, holder.callbackView,
-                        "回复 " + comment.getCommentUser(), holder.commentView);
+                int[] location = new int[2];
+                v.getLocationOnScreen(location);
+                int vBottomHeight = location[1]+v.getHeight();
+                LogUtil.i("you click comment", "bottom height = "+vBottomHeight);
+
+
+                final View view = LayoutInflater.from(mContext).inflate(R.layout.comment_popupwindow, null);
+                window = new PopUpEditWindow(mContext, view, holder.callbackView,
+                        "回复 " + comment.getCommentUser());
                 window.show();
+
+                if(CommonCache.CurrentActivity.getActivityNum() == Constant.MainActivityNum){
+                    CommonCache.AdjustHeight.setAdjustParam(true, vBottomHeight);
+                }
             }
         });
 
@@ -102,15 +113,19 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.callbackView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Comment replyComment = CommonCache.getNewComment();
-                replyComment.setFollowPostID(postID);
+                Comment replyComment = CommonCache.NewComment.getNewComment();
+                replyComment.setFollowPostID(post.getPostID());
                 replyComment.setCommentInfo(window.getInputContent());
                 replyComment.setDependent(false);
                 replyComment.setFollowCommentID(clickedCommentID);
                 replyComment.setBelongCommentID(belongCommentID);
 
-                HelperUtil.InsertComment(replyComment, commentList);
+                HelperUtil.InsertComment(replyComment, post.getComments());
+
+                post.addCommentNum();
+                post.calculateHotDegree();
                 CommentAdapter.this.notifyDataSetChanged();
+                postViewHolder.updateCommentNum(post.getCommentNum());
                 String param = Constant.gson.toJson(replyComment);
 
                 PostRelatedActionTask task = new PostRelatedActionTask(mContext);
@@ -123,7 +138,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final Comment comment = commentList.get(position);
+        Comment comment = post.getComments().get(position);
         if(comment.isDependent()){
             holder.commentUser.setText(comment.getCommentUser() + " : ");
         }else{
@@ -142,10 +157,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         commentInfo.post(new Runnable() {
             @Override
             public void run() {
-                LogUtil.d("getEllipsisCount","start");
+                //LogUtil.d("getEllipsisCount","start");
                 int ellipsisCount = commentInfo.getLayout().getEllipsisCount(0);
                 if(ellipsisCount > 0){
-                    LogUtil.d("ellipsisCount = ", ""+ellipsisCount);
+                    //LogUtil.d("ellipsisCount = ", ""+ellipsisCount);
                     int ellipsisIndex = info.length()-ellipsisCount+1;
                     commentInfo.setText(info.substring(0, ellipsisIndex));
                     commentInfoPlus.setText(info.substring(ellipsisIndex));
@@ -160,11 +175,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return commentList.size();
+        return post.getComments().size();
     }
 
     private String GetFollowCommentUser(int followCommentID){
-        for (Comment comment: commentList) {
+        for (Comment comment: post.getComments()) {
             if(comment.getCommentID() == followCommentID)
                 return comment.getCommentUser();
         }

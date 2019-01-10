@@ -51,4 +51,25 @@ public class Constant {
     public static long dataDefault = 946703833254l;
 
     public static Gson gson = new Gson();
+
+    // activity num
+    public static int MainActivityNum = 1;
+    public static int LoginActivityNum = 2;
+    public static int RegisterActivityNum = 3;
+    public static int MyPostActivityNum = 4;
+    public static int MyDraftActivityNum = 5;
+    public static int MyCareActivityNum = 6;
+    public static int MyCollectActivityNum = 7;
+    public static int PersonalPageActivityNum = 8;
+    public static int UserDetailActivityNum = 9;
+    public static int ChangeUserDetailActivityNum = 10;
+    public static int PostContentActivityNum = 11;
+    public static int CreatePostActivityNum = 12;
+    public static int SearchActivityNum = 13;
+    public static int SystemSettingActivityNum = 14;
+
+    // fragment num
+    public static int HotFragmentNum = 1;
+    public static int LifeFragmentNum = 2;
+    public static int StudyFragmentNum = 3;
 }

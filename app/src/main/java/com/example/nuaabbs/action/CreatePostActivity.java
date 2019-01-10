@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.asyncNetTask.CreatePostTask;
 import com.example.nuaabbs.common.CommonCache;
+import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.Post;
@@ -45,7 +46,7 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(12);
+        CommonCache.CurrentActivity.setActivityNum(Constant.CreatePostActivityNum);
     }
 
     public static void actionStart(Context context){

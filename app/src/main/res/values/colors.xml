@@ -15,6 +15,7 @@
     <color name="colorBlack1">#1f1f1f</color>
 
     <color name="colorPage">#e6c678</color>
+    <color name="colorBlue">#2280d9</color>
     <color name="colorLightBlue">#505084</color>
     <color name="colorLightRed">#ff1f1f</color>
 </resources>

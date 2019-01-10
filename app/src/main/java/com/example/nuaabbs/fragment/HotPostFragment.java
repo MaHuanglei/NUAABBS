@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.asyncNetTask.RequestHotPostTask;
+import com.example.nuaabbs.common.CommonCache;
+import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.Post;
 
@@ -23,6 +25,7 @@ public class HotPostFragment extends BaseFragment {
     private List<Post> postList = PostListManager.hotPostList;
     private PostAdapter postAdapter;
     private SwipeRefreshLayout swipeRefresh;
+    private RecyclerView recyclerView;
 
     public HotPostFragment() {
         // Required empty public constructor
@@ -57,7 +60,7 @@ public class HotPostFragment extends BaseFragment {
             }
         });
 
-        RecyclerView recyclerView = view.findViewById(R.id.hot_list);
+        recyclerView = view.findViewById(R.id.hot_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         postAdapter = new PostAdapter(getContext(), postList, true);
@@ -90,6 +93,12 @@ public class HotPostFragment extends BaseFragment {
             swipeRefresh.setRefreshing(false);
             if(showToast)
                 Toast.makeText(getActivity(), "更新成功!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void SmoothRecycle(int distance){
+        if(recyclerView != null){
+            recyclerView.smoothScrollBy(distance, distance);
         }
     }
 }
