@@ -16,6 +16,7 @@ public class CreatePostTask extends AsyncTask<String, Void, Boolean> {
     Context context;
     ProgressBar progressBar;
     CommonResponse commonResponse;
+    OkHttpUtil okHttpUtil = OkHttpUtil.GetOkHttpUtil();
 
     public CreatePostTask(Context context, ProgressBar proBar){
         this.context = context;
@@ -34,8 +35,7 @@ public class CreatePostTask extends AsyncTask<String, Void, Boolean> {
             CommonRequest commonRequest = new CommonRequest();
             commonRequest.setParam1(strings[0]);
 
-            OkHttpUtil.executeTask(commonRequest, Constant.URL_CreateNewPost);
-            commonResponse = OkHttpUtil.getCommonResponse();
+            commonResponse = okHttpUtil.executeTask(commonRequest, Constant.URL_CreateNewPost);
 
             publishProgress();
         }catch (Exception e){
@@ -55,7 +55,7 @@ public class CreatePostTask extends AsyncTask<String, Void, Boolean> {
             ((CreatePostActivity)context).CreateSuccess(Integer.parseInt(commonResponse.getResParam()));
         }else {
             progressBar.setVisibility(View.INVISIBLE);
-            OkHttpUtil.stdDealResult(context, "CreateNewPostTask");
+            okHttpUtil.stdDealResult("CreateNewPostTask");
         }
     }
 

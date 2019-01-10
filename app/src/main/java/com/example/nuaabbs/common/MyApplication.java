@@ -4,18 +4,14 @@ import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.view.View;
-
-import com.example.nuaabbs.action.BaseActivity;
-import com.example.nuaabbs.util.LogUtil;
 
 public class MyApplication extends Application {
 
     private static Context context;
+    private static int screenHeight = 0;
     public static boolean loginState = false;
     public static UserInfo userInfo = new UserInfo();
-    private static int screenHeight = 0;
-
+    public static PostListManager postListManager;
 
     @Override
     public void onCreate() {

@@ -19,6 +19,7 @@ public class RegisterTask extends AsyncTask<String, Void, Boolean> {
     Context context;
     ProgressBar progressBar;
     CommonResponse commonResponse;
+    OkHttpUtil okHttpUtil = OkHttpUtil.GetOkHttpUtil();
 
     public RegisterTask(Context context, ProgressBar proBar){
         this.context = context;
@@ -37,8 +38,7 @@ public class RegisterTask extends AsyncTask<String, Void, Boolean> {
             CommonRequest commonRequest = new CommonRequest();
             commonRequest.setParam1(strings[0]);
 
-            OkHttpUtil.executeTask(commonRequest, Constant.URL_Register);
-            commonResponse = OkHttpUtil.getCommonResponse();
+            commonResponse = okHttpUtil.executeTask(commonRequest, Constant.URL_Register);
 
             publishProgress();
         }catch (Exception e){
@@ -61,7 +61,7 @@ public class RegisterTask extends AsyncTask<String, Void, Boolean> {
             Toast.makeText(context, commonResponse.getResMsg(), Toast.LENGTH_SHORT).show();
         }else {
             progressBar.setVisibility(View.INVISIBLE);
-            OkHttpUtil.stdDealResult(context, "RegisterTask");
+            okHttpUtil.stdDealResult("RegisterTask");
         }
     }
 

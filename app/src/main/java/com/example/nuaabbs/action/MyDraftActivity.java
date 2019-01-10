@@ -47,7 +47,7 @@ public class MyDraftActivity extends BaseActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.MyDraftActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.MyDraftActivityNum, this);
     }
 
     public static void actionStart(Context context){

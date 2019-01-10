@@ -56,7 +56,7 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
             userBirthday.setText(MyApplication.userInfo.getBirthday().toString());
         userIdiograph.setText(MyApplication.userInfo.getIdioGraph());
 
-        CommonCache.CurrentActivity.setActivityNum(Constant.UserDetailActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.UserDetailActivityNum, this);
         super.onResume();
     }
 

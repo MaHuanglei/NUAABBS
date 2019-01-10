@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,27 +18,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
-import com.example.nuaabbs.asyncNetTask.RequestMyPostTask;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
-import com.example.nuaabbs.common.PostListManager;
-import com.example.nuaabbs.object.Post;
 import com.example.nuaabbs.util.ChoosePhotoUtil;
 import com.example.nuaabbs.util.TakePhotoUtil;
 import com.sun.easysnackbar.BaseTransientBar;
 import com.sun.easysnackbar.EasySnackBar;
-
-
-import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -50,8 +41,6 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
     CircleImageView headImg;
     PostAdapter adapter;
     RecyclerView personalPageRecyclerView;
-
-    List<Post> postList = PostListManager.myPostList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,42 +64,34 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
         Glide.with(this).load(R.drawable.plane).into(headImg);
         collapsingToolbar.setTitle(MyApplication.userInfo.getUserName());
 
-        initPosts();
+        if(MyApplication.postListManager.getMyPostList().isEmpty()){
+            MyApplication.postListManager.refreshMyPostList(Constant.PersonalPageActivityNum);
+        }
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         personalPageRecyclerView.setLayoutManager(layoutManager);
-        adapter = new PostAdapter(this, postList, true);
+        adapter = new PostAdapter(this,
+                MyApplication.postListManager.getMyPostList(), true);
         personalPageRecyclerView.setAdapter(adapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.PersonalPageActivityNum);
-        if(PostListManager.myPostListChanged){
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.PersonalPageActivityNum, this);
+        if(MyApplication.postListManager.isMyPostListChanged()){
             this.adapter.notifyDataSetChanged();
-            PostListManager.myPostListChanged = false;
+            MyApplication.postListManager.setMyPostListChanged(false);
         }
-    }
-
-    private void initPosts(){
-        if(PostListManager.myPostList.isEmpty()){
-            refreshPost();
-        }
-    }
-
-    private void refreshPost(){
-        RequestMyPostTask requestMyPostTask = new RequestMyPostTask(this);
-        requestMyPostTask.execute(MyApplication.userInfo.getId()+"");
-    }
-
-    public void RequestSuccess(){
-        if(adapter != null)
-            adapter.notifyDataSetChanged();
     }
 
     public static void actionStart(Context context){
         Intent intent = new Intent(context, PersonalPageActivity.class);
         context.startActivity(intent);
+    }
+
+    public void DealRequestResult(boolean successFlag){
+        if(successFlag) adapter.notifyDataSetChanged();
     }
 
     @Override

@@ -17,7 +17,6 @@ import com.example.nuaabbs.asyncNetTask.CreatePostTask;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
-import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.object.Post;
 import com.example.nuaabbs.util.LogUtil;
 
@@ -46,7 +45,7 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.CreatePostActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.CreatePostActivityNum, this);
     }
 
     public static void actionStart(Context context){
@@ -99,12 +98,12 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
 
         int labelID = ((RadioGroup)findViewById(R.id.create_post_label)).getCheckedRadioButtonId();
         if(labelID == R.id.label_life){
-            param += ":&:" + "生活";
-            newPost.setLabel("生活");
+            param += ":&:" + Constant.LIFE_LABEL;
+            newPost.setLabel(Constant.LIFE_LABEL);
         }
         else{
-            param += ":&:" + "学习";
-            newPost.setLabel("学习");
+            param += ":&:" + Constant.STUDY_LABEL;
+            newPost.setLabel(Constant.STUDY_LABEL);
         }
 
         tmp = postContent.getText().toString();
@@ -120,13 +119,7 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
     public void CreateSuccess(int postID){
 
         newPost.setPostID(postID);
-
-        if(newPost.getLabel().equals("学习"))
-            PostListManager.addNewStudyPost(newPost);
-        else PostListManager.addNewLifePost(newPost);
-        PostListManager.addNewMyPost(newPost);
-        PostListManager.addNewHotPost(newPost);
-
+        MyApplication.postListManager.AddNewCreatePost(newPost);
         this.finish();
     }
 }

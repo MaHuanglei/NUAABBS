@@ -1,5 +1,7 @@
 package com.example.nuaabbs.common;
 
+import android.content.Context;
+
 import com.example.nuaabbs.object.Comment;
 import com.example.nuaabbs.util.LogUtil;
 
@@ -20,11 +22,14 @@ public class CommonCache {
         }
     }
 
-
     public static class CurrentActivity{
         static int activityNum = 0;
-        static int fragmentNum = 0;
+        static Context activityContext;
 
+        public static void setCurrentActivity(int activityNum, Context context){
+            CurrentActivity.activityNum = activityNum;
+            activityContext = context;
+        }
 
         public static void setActivityNum(int num){
             activityNum = num;
@@ -34,14 +39,12 @@ public class CommonCache {
             return activityNum;
         }
 
-        public static int getFragmentNum() {
-            LogUtil.d("get fragment num", "num = "+fragmentNum);
-            return fragmentNum;
+        public static Context getActivityContext() {
+            return activityContext;
         }
 
-        public static void setFragmentNum(int num) {
-            fragmentNum = num;
-            LogUtil.d("set fragment num", "num = "+num);
+        public static void setActivityContext(Context activityContext) {
+            CurrentActivity.activityContext = activityContext;
         }
     }
 

@@ -19,8 +19,11 @@ public class Constant {
     // charset of connection with server
     public static String CONNECT_CHARSET = "application/json; charset=utf-8";
 
-    public static String REQCODE_LIFE_Post = "生活";
-    public static String REQCODE_STUDY_Post = "学习";
+    public static String LIFE_LABEL = "生活";
+    public static String STUDY_LABEL = "学习";
+
+    public static String REQCODE_LIFE_Post = LIFE_LABEL;
+    public static String REQCODE_STUDY_Post = STUDY_LABEL;
     public static String REQCODE_VIEW = "add view num";
     public static String REQCODE_THUMBUP = "add thumb_up num";
     public static String REQCODE_COMMENT = "add comment";
@@ -53,6 +56,7 @@ public class Constant {
     public static Gson gson = new Gson();
 
     // activity num
+    public static int NullActivityNum = 0;
     public static int MainActivityNum = 1;
     public static int LoginActivityNum = 2;
     public static int RegisterActivityNum = 3;
@@ -69,7 +73,11 @@ public class Constant {
     public static int SystemSettingActivityNum = 14;
 
     // fragment num
+    public static int NullFragmentNum = 0;
     public static int HotFragmentNum = 1;
     public static int LifeFragmentNum = 2;
     public static int StudyFragmentNum = 3;
+
+    public static int REQUEST_SUCCESS = 1;
+    public static int REQUEST_FAIL = 2;
 }

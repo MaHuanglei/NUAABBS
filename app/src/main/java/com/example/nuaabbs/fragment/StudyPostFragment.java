@@ -1,7 +1,6 @@
 package com.example.nuaabbs.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,18 +11,10 @@ import android.widget.Toast;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
-import com.example.nuaabbs.asyncNetTask.RequestLabelPostTask;
-import com.example.nuaabbs.common.CommonCache;
-import com.example.nuaabbs.common.Constant;
-import com.example.nuaabbs.common.PostListManager;
-import com.example.nuaabbs.object.Post;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.example.nuaabbs.common.MyApplication;
 
 public class StudyPostFragment extends BaseFragment {
-    private List<Post> postList = PostListManager.studyPostList;
+
     private PostAdapter postAdapter;
     private SwipeRefreshLayout swipeRefresh;
     private RecyclerView recyclerView;
@@ -32,18 +23,15 @@ public class StudyPostFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initPosts();
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(PostListManager.studyPostListChanged){
-            this.postAdapter.notifyDataSetChanged();
-            PostListManager.studyPostListChanged = false;
+        closeRefreshBar(false);
+        if(MyApplication.postListManager.isStudyPostListChanged()){
+            if(this.postAdapter != null)
+                this.postAdapter.notifyDataSetChanged();
+            MyApplication.postListManager.setStudyPostListChanged(false);
         }
     }
 
@@ -57,36 +45,33 @@ public class StudyPostFragment extends BaseFragment {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshPost();
+                MyApplication.postListManager.refreshStudyPostList(true);
             }
         });
+
+        if(MyApplication.postListManager.getStudyPostList().isEmpty()){
+            MyApplication.postListManager.refreshStudyPostList(true);
+            swipeRefresh.setRefreshing(true);
+        }
 
         recyclerView = view.findViewById(R.id.study_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        postAdapter = new PostAdapter(getContext(),postList, false);
+        postAdapter = new PostAdapter(getContext(),
+                MyApplication.postListManager.getStudyPostList(), false);
         recyclerView.setAdapter(postAdapter);
         return view;
     }
 
-    private void initPosts(){
-        if(PostListManager.studyPostList.isEmpty())
-            refreshPost();
-    }
-
-    private void refreshPost(){
-        RequestLabelPostTask requestLabelPostTask =
-                new RequestLabelPostTask(getActivity(), this);
-        requestLabelPostTask.execute(Constant.REQCODE_STUDY_Post);
-    }
-
-    public void RequestSuccess(){
-        postAdapter.notifyDataSetChanged();
-        closeRefreshBar(true);
-    }
-
-    public void RequestFail(){
-        closeRefreshBar(false);
+    @Override
+    public void DealRequestResult(boolean successFlag){
+        if(successFlag){
+            if(this.postAdapter != null)
+                this.postAdapter.notifyDataSetChanged();
+            closeRefreshBar(true);
+        }else{
+            closeRefreshBar(false);
+        }
     }
 
     public void closeRefreshBar(boolean showToast){
@@ -97,6 +82,7 @@ public class StudyPostFragment extends BaseFragment {
         }
     }
 
+    @Override
     public void SmoothRecycle(int distance){
         if(recyclerView != null){
             recyclerView.smoothScrollBy(distance, distance);

@@ -24,7 +24,7 @@ public class SystemSettingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.SystemSettingActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.SystemSettingActivityNum, this);
     }
 
     public static void actionStart(Context context){

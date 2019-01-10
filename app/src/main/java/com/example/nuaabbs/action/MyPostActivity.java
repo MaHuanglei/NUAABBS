@@ -13,17 +13,12 @@ import android.widget.Toast;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
-import com.example.nuaabbs.asyncNetTask.RequestMyPostTask;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
-import com.example.nuaabbs.common.PostListManager;
-import com.example.nuaabbs.object.Post;
-
-import java.util.List;
 
 public class MyPostActivity extends BaseActivity {
-    private List<Post> postList = PostListManager.myPostList;
+
     PostAdapter adapter;
     private SwipeRefreshLayout swipeRefresh;
 
@@ -34,28 +29,33 @@ public class MyPostActivity extends BaseActivity {
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-        initPosts();
 
         swipeRefresh = findViewById(R.id.my_post_swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshPost();
+                MyApplication.postListManager.refreshMyPostList(Constant.MyPostActivityNum);
             }
         });
+
+        if(MyApplication.postListManager.getMyPostList().isEmpty()){
+            MyApplication.postListManager.refreshMyPostList(Constant.MyPostActivityNum);
+            swipeRefresh.setRefreshing(true);
+        }
 
         RecyclerView myPostRecyclerView = findViewById(R.id.my_post_RecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         myPostRecyclerView.setLayoutManager(layoutManager);
-        adapter = new PostAdapter(this, postList, true);
+        adapter = new PostAdapter(this,
+                MyApplication.postListManager.getMyPostList(), true);
         myPostRecyclerView.setAdapter(adapter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.MyPostActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.MyPostActivityNum, this);
     }
 
     @Override
@@ -74,22 +74,14 @@ public class MyPostActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-    private void initPosts(){
-        if(PostListManager.myPostList.isEmpty()){
-            refreshPost();
+    public void DealRequestResult(boolean successFlag){
+        if(successFlag){
+            closeRefreshBar(true);
+            if(adapter != null)
+                adapter.notifyDataSetChanged();
+        }else{
+            closeRefreshBar(false);
         }
-    }
-
-    private void refreshPost(){
-        RequestMyPostTask requestMyPostTask = new RequestMyPostTask(this);
-        requestMyPostTask.execute(MyApplication.userInfo.getId()+"");
-    }
-
-    public void RequestSuccess(){
-        closeRefreshBar(true);
-
-        if(adapter != null)
-            adapter.notifyDataSetChanged();
     }
 
     public void closeRefreshBar(boolean showToast){

@@ -10,12 +10,11 @@ import com.example.nuaabbs.object.CommonResponse;
 import com.example.nuaabbs.util.OkHttpUtil;
 
 public class PostRelatedActionTask extends AsyncTask<String, String, Boolean> {
-    private Context context;
     private String reqCode;
     private CommonResponse commonResponse;
+    OkHttpUtil okHttpUtil = OkHttpUtil.GetOkHttpUtil();
 
     public PostRelatedActionTask(Context context/*, PostAdapter adapter*/){
-        this.context = context;
         //this.adapter = adapter;
     }
 
@@ -27,8 +26,7 @@ public class PostRelatedActionTask extends AsyncTask<String, String, Boolean> {
             commonRequest.setParam1(params[1]);
             reqCode = params[0];
 
-            OkHttpUtil.executeTask(commonRequest, Constant.URL_PostRelatedAction);
-            commonResponse = OkHttpUtil.getCommonResponse();
+            commonResponse = okHttpUtil.executeTask(commonRequest, Constant.URL_PostRelatedAction);
 
             publishProgress(params[0], params[1]);
         }catch (Exception e){
@@ -49,7 +47,7 @@ public class PostRelatedActionTask extends AsyncTask<String, String, Boolean> {
                 CommonCache.NewComment.setNewCommentID(id);
             }
         }else{
-            OkHttpUtil.stdDealResult(context, "PostRelatedAction");
+            okHttpUtil.stdDealResult("PostRelatedAction");
         }
     }
 }

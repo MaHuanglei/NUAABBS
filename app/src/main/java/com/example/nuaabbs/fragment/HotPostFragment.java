@@ -1,7 +1,8 @@
 package com.example.nuaabbs.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,17 +13,10 @@ import android.widget.Toast;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
-import com.example.nuaabbs.asyncNetTask.RequestHotPostTask;
-import com.example.nuaabbs.common.CommonCache;
-import com.example.nuaabbs.common.Constant;
-import com.example.nuaabbs.common.PostListManager;
-import com.example.nuaabbs.object.Post;
-
-import java.util.List;
+import com.example.nuaabbs.common.MyApplication;
 
 public class HotPostFragment extends BaseFragment {
 
-    private List<Post> postList = PostListManager.hotPostList;
     private PostAdapter postAdapter;
     private SwipeRefreshLayout swipeRefresh;
     private RecyclerView recyclerView;
@@ -32,17 +26,13 @@ public class HotPostFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initPosts();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        if(PostListManager.hotPostListChanged){
-            this.postAdapter.notifyDataSetChanged();
-            PostListManager.hotPostListChanged = false;
+        closeRefreshBar(false);
+        if(MyApplication.postListManager.isHotPostListChanged()){
+            if(this.postAdapter != null)
+                this.postAdapter.notifyDataSetChanged();
+            MyApplication.postListManager.setHotPostListChanged(false);
         }
     }
 
@@ -56,36 +46,33 @@ public class HotPostFragment extends BaseFragment {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshPost();
+                MyApplication.postListManager.refreshHotPostList(true);
             }
         });
+
+        if(MyApplication.postListManager.getHotPostList().isEmpty()){
+            MyApplication.postListManager.refreshHotPostList(true);
+            swipeRefresh.setRefreshing(true);
+        }
 
         recyclerView = view.findViewById(R.id.hot_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        postAdapter = new PostAdapter(getContext(), postList, true);
+        postAdapter = new PostAdapter(getContext(),
+                MyApplication.postListManager.getHotPostList(), true);
         recyclerView.setAdapter(postAdapter);
         return view;
     }
 
-    private void initPosts(){
-        if(PostListManager.hotPostList.isEmpty())
-            refreshPost();
-    }
-
-    private void refreshPost(){
-        RequestHotPostTask requestHotPostTask = new RequestHotPostTask(getActivity(), this);
-        requestHotPostTask.execute("");
-    }
-
-    public void RequestSuccess(){
-
-        postAdapter.notifyDataSetChanged();
-        closeRefreshBar(true);
-    }
-
-    public void RequestFail(){
-        closeRefreshBar(false);
+    @Override
+    public void DealRequestResult(boolean successFlag){
+        if(successFlag){
+            if(this.postAdapter != null)
+                this.postAdapter.notifyDataSetChanged();
+            closeRefreshBar(true);
+        }else{
+            closeRefreshBar(false);
+        }
     }
 
     public void closeRefreshBar(boolean showToast){
@@ -96,6 +83,7 @@ public class HotPostFragment extends BaseFragment {
         }
     }
 
+    @Override
     public void SmoothRecycle(int distance){
         if(recyclerView != null){
             recyclerView.smoothScrollBy(distance, distance);

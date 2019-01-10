@@ -12,4 +12,12 @@ public class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         LogUtil.d("MainActivity-BaseFragment", getClass().getSimpleName());
     }
+
+    public void DealRequestResult(boolean successFlag){
+
+    }
+
+    public void SmoothRecycle(int distance){
+
+    }
 }

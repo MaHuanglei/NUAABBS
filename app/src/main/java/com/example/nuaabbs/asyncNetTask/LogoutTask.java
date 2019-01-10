@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 public class LogoutTask extends AsyncTask<Void, Void, Boolean> {
     Context context;
     CommonResponse response;
+    OkHttpUtil okHttpUtil = OkHttpUtil.GetOkHttpUtil();
 
     public LogoutTask(Context context){
         this.context = context;
@@ -34,8 +35,7 @@ public class LogoutTask extends AsyncTask<Void, Void, Boolean> {
             String param = "id=" + Integer.toString(MyApplication.userInfo.getId())
                     + ":&:" + "userName=" + MyApplication.userInfo.getUserName();
             CommonRequest commonRequest = new CommonRequest("", param, "");
-            OkHttpUtil.executeTask(commonRequest, Constant.URL_Logout);
-            response = OkHttpUtil.getCommonResponse();
+            response = okHttpUtil.executeTask(commonRequest, Constant.URL_Logout);
 
             publishProgress();
         }catch (Exception e){
@@ -51,12 +51,12 @@ public class LogoutTask extends AsyncTask<Void, Void, Boolean> {
         String resCode = response.getResCode();
         if(resCode.equals(Constant.RESCODE_SUCCESS)){
             MyApplication.userInfo = new Gson()
-                    .fromJson(OkHttpUtil.getCommonResponse().getResParam(), UserInfo.class);
+                    .fromJson(response.getResParam(), UserInfo.class);
             MyApplication.loginState = false;
-            PostListManager.myPostList.clear();
+            MyApplication.postListManager.ClearMyPostsWhenLogout();
             ((MainActivity)context).RefreshNavigationView();
             Toast.makeText(context, "下线成功！", Toast.LENGTH_SHORT).show();
-        }else OkHttpUtil.stdDealResult(context, "MainActivity Logout");
+        }else okHttpUtil.stdDealResult("MainActivity Logout");
     }
 
     @Override

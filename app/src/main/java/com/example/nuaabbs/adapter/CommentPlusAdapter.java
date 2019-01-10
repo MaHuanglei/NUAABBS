@@ -94,7 +94,7 @@ public class CommentPlusAdapter extends RecyclerView.Adapter<CommentPlusAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Comment comment = dependentCommentList.get(position);
 
-        Glide.with(mContext).load(HelperUtil.getRandomHeadID()).into(holder.head);
+        //Glide.with(mContext).load(HelperUtil.getRandomHeadID()).into(holder.head);
         holder.user.setText(comment.getCommentUser());
         holder.info.setText(comment.getCommentInfo());
         holder.timeText.setText(comment.getTime());

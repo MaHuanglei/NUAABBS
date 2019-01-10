@@ -41,7 +41,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.RegisterActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.RegisterActivityNum, this);
     }
 
     public static void actionStart(Context context){

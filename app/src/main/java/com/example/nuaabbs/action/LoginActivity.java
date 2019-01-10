@@ -78,7 +78,7 @@ public class LoginActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.LoginActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.LoginActivityNum, this);
         if(MyApplication.loginState)
             this.finish();
     }

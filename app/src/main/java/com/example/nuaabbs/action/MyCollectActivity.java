@@ -24,7 +24,7 @@ public class MyCollectActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.MyCollectActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.MyCollectActivityNum, this);
     }
 
     public static void actionStart(Context context){

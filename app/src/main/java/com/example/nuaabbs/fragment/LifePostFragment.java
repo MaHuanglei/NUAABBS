@@ -1,7 +1,6 @@
 package com.example.nuaabbs.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,17 +11,10 @@ import android.widget.Toast;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
-import com.example.nuaabbs.asyncNetTask.RequestLabelPostTask;
-import com.example.nuaabbs.common.CommonCache;
-import com.example.nuaabbs.common.Constant;
-import com.example.nuaabbs.common.PostListManager;
-import com.example.nuaabbs.object.Post;
-
-import java.util.List;
+import com.example.nuaabbs.common.MyApplication;
 
 public class LifePostFragment extends BaseFragment {
 
-    private List<Post> postList = PostListManager.lifePostList;
     private PostAdapter postAdapter;
     private SwipeRefreshLayout swipeRefresh;
     private RecyclerView recyclerView;
@@ -32,17 +24,13 @@ public class LifePostFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initPosts();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        if(PostListManager.lifePostListChanged){
-            this.postAdapter.notifyDataSetChanged();
-            PostListManager.lifePostListChanged = false;
+        closeRefreshBar(false);
+        if(MyApplication.postListManager.isLifePostListChanged()){
+            if(this.postAdapter != null)
+                this.postAdapter.notifyDataSetChanged();
+            MyApplication.postListManager.setLifePostListChanged(false);
         }
     }
 
@@ -56,37 +44,33 @@ public class LifePostFragment extends BaseFragment {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshPost();
+                MyApplication.postListManager.refreshLifePostList(true);
             }
         });
+
+        if(MyApplication.postListManager.getLifePostList().isEmpty()){
+            MyApplication.postListManager.refreshLifePostList(true);
+            swipeRefresh.setRefreshing(true);
+        }
 
         recyclerView = view.findViewById(R.id.life_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        postAdapter = new PostAdapter(getContext(),postList, false);
+        postAdapter = new PostAdapter(getContext(),
+                MyApplication.postListManager.getLifePostList(), false);
         recyclerView.setAdapter(postAdapter);
         return view;
     }
 
-    private void initPosts(){
-        if(PostListManager.lifePostList.isEmpty())
-            refreshPost();
-    }
-
-    private void refreshPost(){
-        RequestLabelPostTask requestLabelPostTask =
-                new RequestLabelPostTask(getActivity(), this);
-        requestLabelPostTask.execute(Constant.REQCODE_LIFE_Post);
-    }
-
-    public void RequestSuccess(){
-        postAdapter.notifyDataSetChanged();
-
-        closeRefreshBar(true);
-    }
-
-    public void RequestFail(){
-        closeRefreshBar(false);
+    @Override
+    public void DealRequestResult(boolean successFlag){
+        if(successFlag){
+            if(this.postAdapter != null)
+                this.postAdapter.notifyDataSetChanged();
+            closeRefreshBar(true);
+        }else{
+            closeRefreshBar(false);
+        }
     }
 
     public void closeRefreshBar(boolean showToast){
@@ -97,6 +81,7 @@ public class LifePostFragment extends BaseFragment {
         }
     }
 
+    @Override
     public void SmoothRecycle(int distance){
         if(recyclerView != null){
             recyclerView.smoothScrollBy(distance, distance);

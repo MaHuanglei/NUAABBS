@@ -24,6 +24,10 @@ public class LogUtil {
         if(level <= DEBUG) Log.d(TAG + tag, msg);
     }
 
+    public static void d(String msg){
+        if(level <= DEBUG) Log.d(TAG + "Default", msg);
+    }
+
     public static void i(String tag, String msg){
         if(level <= INFO) Log.i(TAG + tag, msg);
     }

@@ -24,7 +24,7 @@ public class MyCareActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.MyCareActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.MyCareActivityNum, this);
     }
 
     public static void actionStart(Context context){

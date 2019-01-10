@@ -24,7 +24,7 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.SearchActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.SearchActivityNum, this);
     }
 
     public static void actionStart(Context context){

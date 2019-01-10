@@ -199,7 +199,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         Post post = postList.get(position);
 
-        Glide.with(mContext).load(HelperUtil.getRandomHeadID()).into(holder.headPortrait);
+        //Glide.with(mContext).load(HelperUtil.getRandomHeadID()).into(holder.headPortrait);
         holder.sender.setText(post.getPoster());
         holder.time.setText(post.getDateStr());
         if(showLabel) holder.label.setText(post.getLabel());

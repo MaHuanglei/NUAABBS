@@ -17,6 +17,7 @@ public class UpdateUserDetailTask extends AsyncTask<String, Void, Boolean> {
     Context context;
     ProgressBar progressBar;
     CommonResponse commonResponse;
+    OkHttpUtil okHttpUtil = OkHttpUtil.GetOkHttpUtil();
 
     public UpdateUserDetailTask(Context context, ProgressBar proBar){
         this.context = context;
@@ -35,8 +36,7 @@ public class UpdateUserDetailTask extends AsyncTask<String, Void, Boolean> {
             CommonRequest commonRequest = new CommonRequest();
             commonRequest.setParam1(strings[0]);
 
-            OkHttpUtil.executeTask(commonRequest, Constant.URL_UpdateUserDetail);
-            commonResponse = OkHttpUtil.getCommonResponse();
+            commonResponse = okHttpUtil.executeTask(commonRequest, Constant.URL_UpdateUserDetail);
 
             publishProgress();
         }catch (Exception e){
@@ -56,7 +56,7 @@ public class UpdateUserDetailTask extends AsyncTask<String, Void, Boolean> {
             ((ChangeUserDetailActivity)context).UpdateSuccess();
         }else {
             progressBar.setVisibility(View.INVISIBLE);
-            OkHttpUtil.stdDealResult(context, "UpdateUserDetailTask");
+            okHttpUtil.stdDealResult("UpdateUserDetailTask");
         }
     }
 

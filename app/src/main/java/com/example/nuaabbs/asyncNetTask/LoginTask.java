@@ -20,6 +20,7 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
     Context context;
     ProgressBar progressBar;
     CommonResponse commonResponse;
+    OkHttpUtil okHttpUtil = OkHttpUtil.GetOkHttpUtil();
 
     public LoginTask(Context context, View v){
         this.context = context;
@@ -38,8 +39,7 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
             CommonRequest commonRequest = new CommonRequest();
             commonRequest.setParam1(params[0]+":&:"+params[1]);
 
-            OkHttpUtil.executeTask(commonRequest, Constant.URL_Login);
-            commonResponse = OkHttpUtil.getCommonResponse();
+            commonResponse = okHttpUtil.executeTask(commonRequest, Constant.URL_Login);
 
             publishProgress();
         }catch (Exception e){
@@ -55,7 +55,6 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
 
         String resCode = commonResponse.getResCode();
         if(resCode.equals(Constant.RESCODE_SUCCESS)){
-            commonResponse = OkHttpUtil.getCommonResponse();
 
             MyApplication.loginState = true;
             MyApplication.userInfo = Constant.gson
@@ -69,7 +68,7 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
             Toast.makeText(context, commonResponse.getResMsg(), Toast.LENGTH_SHORT).show();
         }else {
             progressBar.setVisibility(View.INVISIBLE);
-            OkHttpUtil.stdDealResult(context, "LoginActivity LoginTask");
+            okHttpUtil.stdDealResult("LoginActivity LoginTask");
         }
     }
 

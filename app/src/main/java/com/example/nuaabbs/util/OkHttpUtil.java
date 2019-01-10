@@ -1,8 +1,9 @@
 package com.example.nuaabbs.util;
 
-import android.content.Context;
 import android.widget.Toast;
 
+import com.example.nuaabbs.action.BaseActivity;
+import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.object.CommonRequest;
@@ -20,10 +21,10 @@ import okhttp3.Response;
 
 public class OkHttpUtil {
 
-    private static OkHttpClient client;
-    private static CommonResponse commonResponse;
+    private OkHttpClient client;
+    private CommonResponse commonResponse;
 
-    public static void prepareOkHttp(){
+    private OkHttpUtil(){
         if(client != null) return;
 
         client = new OkHttpClient();
@@ -33,13 +34,15 @@ public class OkHttpUtil {
                 .writeTimeout(10, TimeUnit.SECONDS);
     }
 
-    public static void executeTask(CommonRequest commonRequest, String url){
+    public static OkHttpUtil GetOkHttpUtil(){
+        return new OkHttpUtil();
+    }
+
+    public CommonResponse executeTask(CommonRequest commonRequest, String url){
         if(!MyApplication.isNetworkAvailable()){
             commonResponse = new CommonResponse(Constant.RESCODE_NET_FAIL,Constant.NET_UNABLE,"");
-            return;
+            return commonResponse;
         }
-
-        prepareOkHttp();
 
         try{
             String json = Constant.gson.toJson(commonRequest);
@@ -54,6 +57,8 @@ public class OkHttpUtil {
                 String responseData = response.body().string();
                 commonResponse = Constant.gson.fromJson(responseData, CommonResponse.class);
                 if(response.body() != null) response.body().close();
+            }else{
+                commonResponse = new CommonResponse(Constant.RESCODE_SYSTEM_ERROR,Constant.SYSTEM_ERROR,"");
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -65,23 +70,32 @@ public class OkHttpUtil {
                 commonResponse = new CommonResponse(Constant.RESCODE_SYSTEM_ERROR,Constant.SYSTEM_ERROR,"");
             }
         }
-    }
 
-    public static CommonResponse getCommonResponse(){
         return commonResponse;
     }
 
-    public static void stdDealResult(Context context, String tag){
+    public CommonResponse getCommonResponse(){
+        return commonResponse;
+    }
 
-        String resCode = commonResponse.getResCode();
-        if(resCode.equals(Constant.RESCODE_NET_FAIL)){
-            Toast.makeText(context, Constant.NET_UNABLE, Toast.LENGTH_SHORT).show();
-        }else if(resCode.equals(Constant.RESCODE_NET_TIMEOUT)){
-            Toast.makeText(context, Constant.NET_TIMEOUT, Toast.LENGTH_SHORT).show();
-        }else{
-            LogUtil.e(tag + Constant.OKHTTP_TAG, Constant.SYSTEM_ERROR);
-            Toast.makeText(context, Constant.SYSTEM_ERROR, Toast.LENGTH_SHORT).show();
-        }
+    public void stdDealResult(String tag){
+
+        final String logTag = tag;
+        ((BaseActivity)CommonCache.CurrentActivity.getActivityContext()).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String resCode = commonResponse.getResCode();
+                if(resCode.equals(Constant.RESCODE_NET_FAIL)){
+                    Toast.makeText(CommonCache.CurrentActivity.getActivityContext(), Constant.NET_UNABLE, Toast.LENGTH_SHORT).show();
+                }else if(resCode.equals(Constant.RESCODE_NET_TIMEOUT)){
+                    Toast.makeText(CommonCache.CurrentActivity.getActivityContext(), Constant.NET_TIMEOUT, Toast.LENGTH_SHORT).show();
+                }else{
+                    LogUtil.e(logTag + Constant.OKHTTP_TAG, Constant.SYSTEM_ERROR);
+                    Toast.makeText(CommonCache.CurrentActivity.getActivityContext(), Constant.SYSTEM_ERROR, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
     
 }

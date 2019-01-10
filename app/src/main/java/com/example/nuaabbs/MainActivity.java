@@ -2,11 +2,9 @@ package com.example.nuaabbs;
 
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -35,6 +33,7 @@ import com.example.nuaabbs.asyncNetTask.LogoutTask;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.fragment.BaseFragment;
 import com.example.nuaabbs.fragment.HotPostFragment;
 import com.example.nuaabbs.fragment.LifePostFragment;
@@ -97,7 +96,7 @@ public class MainActivity extends BaseActivity
                 new MyPageFragmentAdapter(getSupportFragmentManager(), mFragmentList, mTitle);
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+        //mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
         getWindow().getDecorView().post(new Runnable() {
             @Override
@@ -124,6 +123,8 @@ public class MainActivity extends BaseActivity
                 }
             }
         });
+
+        MyApplication.postListManager = new PostListManager();
     }
 
     private void initData()
@@ -139,7 +140,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        CommonCache.CurrentActivity.setActivityNum(Constant.MainActivityNum);
+        CommonCache.CurrentActivity.setCurrentActivity(Constant.MainActivityNum, this);
         RefreshNavigationView();
     }
 
@@ -254,16 +255,6 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            finish();
-            return true;
-        }else {
-            return super.onKeyDown(keyCode, event);
-        }
-    }
-
     public int getActivityBottomDistanceFromScreenBottom(){
         // get activity bottom
         Rect r = new Rect();
@@ -273,13 +264,13 @@ public class MainActivity extends BaseActivity
 
     public void smoothScrollView(int distance){
         int position = mTabLayout.getSelectedTabPosition();
+        mFragmentList.get(position).SmoothRecycle(distance);
+    }
 
-        if(position == 0){
-            ((HotPostFragment)mFragmentList.get(0)).SmoothRecycle(distance);
-        }else if(position == 1){
-            ((StudyPostFragment)mFragmentList.get(1)).SmoothRecycle(distance);
-        }else if(position == 2){
-            ((LifePostFragment)mFragmentList.get(2)).SmoothRecycle(distance);
-        }
+    public void DealRequestPostResult(int fragmentNum, boolean successFlag){
+        LogUtil.d("请求结果下发到达MainActivity fragment = "+fragmentNum);
+
+        if(Constant.NullFragmentNum<fragmentNum && fragmentNum<Constant.StudyFragmentNum+1)
+            mFragmentList.get(fragmentNum-1).DealRequestResult(successFlag);
     }
 }
