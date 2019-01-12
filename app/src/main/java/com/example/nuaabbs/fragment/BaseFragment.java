@@ -13,10 +13,6 @@ public class BaseFragment extends Fragment {
         LogUtil.d("MainActivity-BaseFragment", getClass().getSimpleName());
     }
 
-    public void DealRequestResult(boolean successFlag){
-
-    }
-
     public void SmoothRecycle(int distance){
 
     }

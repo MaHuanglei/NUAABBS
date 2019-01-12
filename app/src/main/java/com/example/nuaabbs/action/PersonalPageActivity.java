@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,16 +17,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.common.MyHandle;
 import com.example.nuaabbs.util.ChoosePhotoUtil;
+import com.example.nuaabbs.util.LogUtil;
 import com.example.nuaabbs.util.TakePhotoUtil;
 import com.sun.easysnackbar.BaseTransientBar;
 import com.sun.easysnackbar.EasySnackBar;
@@ -42,32 +42,69 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
     PostAdapter adapter;
     RecyclerView personalPageRecyclerView;
 
+    TextView userName, schoolID, sex, birthday, idiograph;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_page);
 
         Toolbar toolbar = findViewById(R.id.personal_toolbar);
-        CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
-        headImg = findViewById(R.id.personal_headImg);
-        headImg.setOnClickListener(this);
-        personalPageRecyclerView = findViewById(R.id.personal_page_RecyclerView);
-
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        FloatingActionButton addPost = findViewById(R.id.personal_addPost);
-        addPost.setOnClickListener(this);
-
-        Glide.with(this).load(R.drawable.plane).into(headImg);
+        CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(MyApplication.userInfo.getUserName());
 
+        headImg = findViewById(R.id.personal_headImg);
+        headImg.setOnClickListener(this);
+        //Glide.with(this).load(R.drawable.plane).into(headImg);
+
+        findViewById(R.id.personal_posts).setOnClickListener(this);
+        findViewById(R.id.personal_care).setOnClickListener(this);
+        findViewById(R.id.personal_fans).setOnClickListener(this);
+
+        findViewById(R.id.linear_user_name).setOnClickListener(this);
+        findViewById(R.id.linear_school_id).setOnClickListener(this);
+        findViewById(R.id.linear_sex).setOnClickListener(this);
+        findViewById(R.id.linear_birthday).setOnClickListener(this);
+        findViewById(R.id.linear_idiograph).setOnClickListener(this);
+
+        userName = findViewById(R.id.linear_user_name_c);
+        schoolID = findViewById(R.id.linear_school_id_c);
+        sex = findViewById(R.id.linear_sex_c);
+        birthday = findViewById(R.id.linear_birthday_c);
+        idiograph = findViewById(R.id.linear_idiograph_c);
+        setUserInfoText();
+
         if(MyApplication.postListManager.getMyPostList().isEmpty()){
-            MyApplication.postListManager.refreshMyPostList(Constant.PersonalPageActivityRequestTask);
+            MyApplication.postListManager.refreshMyPostList();
         }
 
+        MyApplication.myHandle.setPersonalPageListener(new MyHandle.HandleListener() {
+            @Override
+            public void OnHandleMsg(int msgArg) {
+                LogUtil.d("begin handle personal page update");
+                if(msgArg == MyHandle.SUCCESS){
+                    if(adapter != null)
+                        adapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        MyApplication.myHandle.setUserInfoChangedListerForPersonal(new MyHandle.HandleListener() {
+            @Override
+            public void OnHandleMsg(int msgArg) {
+                LogUtil.d("begin handle update user detail");
+                if(msgArg == MyHandle.SUCCESS){
+                    setUserInfoText();
+                }
+            }
+        });
+
+        personalPageRecyclerView = findViewById(R.id.personal_page_RecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         personalPageRecyclerView.setLayoutManager(layoutManager);
         adapter = new PostAdapter(this,
@@ -90,10 +127,6 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
         context.startActivity(intent);
     }
 
-    public void DealRequestResult(boolean successFlag){
-        if(successFlag) adapter.notifyDataSetChanged();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.person, menu);
@@ -107,8 +140,8 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
             case android.R.id.home:
                 finish();
                 break;
-            case R.id.action_show_detail:
-                UserDetailActivity.actionStart(PersonalPageActivity.this);
+            case R.id.action_change_detail:
+                ChangeUserDetailActivity.actionStart(this);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -119,9 +152,6 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.personal_addPost:
-                CreatePostActivity.actionStart(PersonalPageActivity.this);
-                break;
             case R.id.personal_headImg:
                 contentView = EasySnackBar.convertToContentView(v, R.layout.edit_head_img);
                 contentView.findViewById(R.id.personal_watch_headImg).setOnClickListener(this);
@@ -191,6 +221,18 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
             default:
                 break;
         }
+    }
+
+    private void setUserInfoText(){
+        userName.setText(MyApplication.userInfo.getUserName());
+        schoolID.setText(MyApplication.userInfo.getSchoolID());
+        sex.setText(MyApplication.userInfo.getSex());
+        String tmp;
+        if(MyApplication.userInfo.isBirthdayEffect())
+            tmp = MyApplication.userInfo.getBirthday().toString();
+        else tmp = "未填写";
+        birthday.setText(tmp);
+        idiograph.setText(MyApplication.userInfo.getIdioGraph());
     }
 
     private void displayImage(String imagePath) {

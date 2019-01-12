@@ -16,6 +16,8 @@ import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.common.MyHandle;
+import com.example.nuaabbs.util.LogUtil;
 
 public class MyPostActivity extends BaseActivity {
 
@@ -35,12 +37,26 @@ public class MyPostActivity extends BaseActivity {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                MyApplication.postListManager.refreshMyPostList(Constant.MyPostActivityRequestTask);
+                MyApplication.postListManager.refreshMyPostList();
+            }
+        });
+
+        MyApplication.myHandle.setMyPostUpdateListener(new MyHandle.HandleListener() {
+            @Override
+            public void OnHandleMsg(int msgArg) {
+                LogUtil.d("begin handle my post update");
+                if(msgArg == MyHandle.SUCCESS){
+                    if(adapter != null)
+                        adapter.notifyDataSetChanged();
+                    closeRefreshBar(true);
+                }else {
+                    closeRefreshBar(false);
+                }
             }
         });
 
         if(MyApplication.postListManager.getMyPostList().isEmpty()){
-            MyApplication.postListManager.refreshMyPostList(Constant.MyPostActivityRequestTask);
+            MyApplication.postListManager.refreshMyPostList();
             swipeRefresh.setRefreshing(true);
         }
 
@@ -73,16 +89,6 @@ public class MyPostActivity extends BaseActivity {
     public static void actionStart(Context context){
         Intent intent = new Intent(context, MyPostActivity.class);
         context.startActivity(intent);
-    }
-
-    public void DealRequestResult(boolean successFlag){
-        if(successFlag){
-            closeRefreshBar(true);
-            if(adapter != null)
-                adapter.notifyDataSetChanged();
-        }else{
-            closeRefreshBar(false);
-        }
     }
 
     public void closeRefreshBar(boolean showToast){

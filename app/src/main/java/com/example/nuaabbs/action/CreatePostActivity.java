@@ -13,12 +13,14 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.nuaabbs.R;
-import com.example.nuaabbs.asyncNetTask.CreatePostTask;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.object.CommonRequest;
+import com.example.nuaabbs.object.CommonResponse;
 import com.example.nuaabbs.object.Post;
 import com.example.nuaabbs.util.LogUtil;
+import com.example.nuaabbs.util.OkHttpUtil;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -27,6 +29,9 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
     EditText postContent;
     Post newPost;
     long lastRequestTime = 0l;
+
+    ProgressBar progressBar;
+    OkHttpUtil okHttpUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,7 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        progressBar = findViewById(R.id.create_post_bar);
         postContent = findViewById(R.id.create_post_content);
         findViewById(R.id.action_create).setOnClickListener(this);
     }
@@ -111,13 +117,40 @@ public class CreatePostActivity extends BaseActivity implements View.OnClickList
         param += ":&:" + tmp;
         LogUtil.d("createNewPost", param);
 
-        CreatePostTask createPostTask =
-                new CreatePostTask(this, (ProgressBar)findViewById(R.id.create_post_bar));
-        createPostTask.execute(param);
+        executeCreatePostTask(param);
+    }
+
+    private void executeCreatePostTask(final String param){
+        progressBar.setVisibility(View.VISIBLE);
+        if(okHttpUtil == null)
+            okHttpUtil = OkHttpUtil.GetOkHttpUtil();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                CommonRequest commonRequest = new CommonRequest();
+                commonRequest.setParam1(param);
+                okHttpUtil.executeTask(commonRequest, Constant.URL_CreateNewPost);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        CommonResponse commonResponse = okHttpUtil.getCommonResponse();
+                        String resCode = commonResponse.getResCode();
+                        if(resCode.equals(Constant.RESCODE_SUCCESS)){
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(CreatePostActivity.this, commonResponse.getResMsg(), Toast.LENGTH_SHORT).show();
+                            CreatePostActivity.this.CreateSuccess(Integer.parseInt(commonResponse.getResParam()));
+                        }else {
+                            progressBar.setVisibility(View.INVISIBLE);
+                            okHttpUtil.stdDealResult("CreateNewPostTask");
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     public void CreateSuccess(int postID){
-
         newPost.setPostID(postID);
         MyApplication.postListManager.AddNewCreatePost(newPost);
         this.finish();

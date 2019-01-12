@@ -15,14 +15,18 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.nuaabbs.R;
-import com.example.nuaabbs.asyncNetTask.RegisterTask;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.object.CommonRequest;
+import com.example.nuaabbs.object.CommonResponse;
+import com.example.nuaabbs.util.OkHttpUtil;
 
 public class RegisterActivity extends BaseActivity implements View.OnClickListener{
 
+    OkHttpUtil okHttpUtil;
     EditText reg_userName, reg_password;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         if(actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
 
+        progressBar = findViewById(R.id.reg_proBar);
         Button reg_btn = findViewById(R.id.reg_btn);
         reg_btn.setOnClickListener(this);
         reg_userName = findViewById(R.id.reg_user_name);
@@ -115,15 +120,12 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             tmp = "null";
             MyApplication.userInfo.setSex("保密");
         }
-
         param += ":&:" + tmp;
 
-        RegisterTask regTask =
-                new RegisterTask(this, (ProgressBar)findViewById(R.id.reg_proBar));
-        regTask.execute(param);
+        executeRegisterTask(param);
     }
 
-    public void registerSuccess(int id){
+    private void registerSuccess(int id){
         MyApplication.loginState = true;
         MyApplication.userInfo.setId(id);
         saveLoginInfo();
@@ -131,7 +133,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         this.finish();
     }
 
-    public void saveLoginInfo(){
+    private void saveLoginInfo(){
         SharedPreferences spf = getSharedPreferences("loginData", 0);
         SharedPreferences.Editor  editor = spf.edit();
 
@@ -140,5 +142,39 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         editor.putBoolean("remPassword", true);
 
         editor.apply();
+    }
+
+    private void executeRegisterTask(final String param){
+        progressBar.setVisibility(View.VISIBLE);
+        if(okHttpUtil == null)
+            okHttpUtil = OkHttpUtil.GetOkHttpUtil();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                CommonRequest commonRequest = new CommonRequest();
+                commonRequest.setParam1(param);
+                okHttpUtil.executeTask(commonRequest, Constant.URL_Register);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        CommonResponse commonResponse = okHttpUtil.getCommonResponse();
+                        String resCode = commonResponse.getResCode();
+                        if(resCode.equals(Constant.RESCODE_SUCCESS)){
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(RegisterActivity.this, commonResponse.getResMsg(), Toast.LENGTH_SHORT).show();
+                            RegisterActivity.this.registerSuccess(Integer.parseInt(commonResponse.getResParam()));
+                        }else if(resCode.equals(Constant.RESCODE_REGISTERED)){
+                            progressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(RegisterActivity.this, commonResponse.getResMsg(), Toast.LENGTH_SHORT).show();
+                        }else {
+                            progressBar.setVisibility(View.INVISIBLE);
+                            okHttpUtil.stdDealResult("RegisterTask");
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 }

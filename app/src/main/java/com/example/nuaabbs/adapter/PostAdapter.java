@@ -38,6 +38,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private List<Post> postList;
     private boolean showLabel;
 
+    private int currentShowItemCount;
+
     private PopUpEditWindow window;
 
     public PostAdapter() {
@@ -95,6 +97,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         this.mContext = context;
         this.postList = postList;
         this.showLabel = showLabel;
+
+        currentShowItemCount = this.postList.size();
+        //hasShowBottom = false;
     }
 
     @Override
@@ -198,6 +203,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Post post = postList.get(position);
+        LogUtil.d("position = "+position);
+        if(position+1 == postList.size())LogUtil.d("已显示最后一项");
 
         //Glide.with(mContext).load(HelperUtil.getRandomHeadID()).into(holder.headPortrait);
         holder.sender.setText(post.getPoster());
@@ -225,10 +232,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private void DealPostRelatedAction(String reqCode, String param){
         PostRelatedActionTask task = new PostRelatedActionTask(mContext);
         task.execute(reqCode, param);
-    }
-
-    public void DealFail(String reqCode, String param){
-
     }
 
     private void ShowAddCommentWindow(View callbackView){

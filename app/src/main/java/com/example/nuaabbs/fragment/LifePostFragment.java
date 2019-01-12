@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.common.MyHandle;
+import com.example.nuaabbs.util.LogUtil;
 
 public class LifePostFragment extends BaseFragment {
 
@@ -44,14 +46,28 @@ public class LifePostFragment extends BaseFragment {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                MyApplication.postListManager.refreshLifePostList(true);
+                MyApplication.postListManager.refreshLifePostList();
             }
         });
 
         if(MyApplication.postListManager.getLifePostList().isEmpty()){
-            MyApplication.postListManager.refreshLifePostList(true);
+            MyApplication.postListManager.refreshLifePostList();
             swipeRefresh.setRefreshing(true);
         }
+
+        MyApplication.myHandle.setLifePostFragmentUpdateListener(new MyHandle.HandleListener() {
+            @Override
+            public void OnHandleMsg(int msgArg) {
+                LogUtil.d("begin handle life update msg");
+                if(msgArg == MyHandle.SUCCESS){
+                    if(LifePostFragment.this.postAdapter != null)
+                        LifePostFragment.this.postAdapter.notifyDataSetChanged();
+                    closeRefreshBar(true);
+                }else{
+                    LifePostFragment.this.closeRefreshBar(false);
+                }
+            }
+        });
 
         recyclerView = view.findViewById(R.id.life_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -60,17 +76,6 @@ public class LifePostFragment extends BaseFragment {
                 MyApplication.postListManager.getLifePostList(), false);
         recyclerView.setAdapter(postAdapter);
         return view;
-    }
-
-    @Override
-    public void DealRequestResult(boolean successFlag){
-        if(successFlag){
-            if(this.postAdapter != null)
-                this.postAdapter.notifyDataSetChanged();
-            closeRefreshBar(true);
-        }else{
-            closeRefreshBar(false);
-        }
     }
 
     public void closeRefreshBar(boolean showToast){

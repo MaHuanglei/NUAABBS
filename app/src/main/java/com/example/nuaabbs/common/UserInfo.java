@@ -1,11 +1,8 @@
 package com.example.nuaabbs.common;
 
-import com.example.nuaabbs.object.Post;
 import com.example.nuaabbs.util.LogUtil;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserInfo {
     private int id;
@@ -27,10 +24,7 @@ public class UserInfo {
 
 
     public UserInfo(){
-
-        headPortrait = "default.jpg";
-        idioGraph = "此人很懒，什么都没写哦";
-        postNum = draftNum = collectPostNum = careUserNum = fansNum = 0;
+        initUserInfo();
     }
 
     public void PrintUserInfo(){
@@ -54,6 +48,24 @@ public class UserInfo {
         LogUtil.d("UserInfo", "collectNum = " + Integer.toString(this.collectPostNum));
         LogUtil.d("UserInfo", "careUserNum = " + Integer.toString(this.careUserNum));
         LogUtil.d("UserInfo", "fansNum = " + Integer.toString(this.fansNum));
+    }
+
+    public void initUserInfo(){
+        id = 0;
+
+        if(userName != null && !userName.isEmpty())
+            userName = "";
+        if(password != null && !password.isEmpty())
+            password = "";
+        if(schoolID != null && !schoolID.isEmpty())
+            schoolID = "";
+        if(sex != null && !sex.isEmpty())
+            sex = "";
+        if(birthday != null) birthday = null;
+
+        headPortrait = "default.jpg";
+        idioGraph = "此人很懒，什么都没写哦";
+        postNum = draftNum = collectPostNum = careUserNum = fansNum = 0;
     }
 
     public int getId() {
@@ -99,7 +111,9 @@ public class UserInfo {
     }
 
     public String getSex() {
-        return sex;
+        if(sex == null)
+            return "未填写";
+        else return sex;
     }
 
     public void setSex(String sex) {

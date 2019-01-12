@@ -14,12 +14,15 @@ import android.widget.Toast;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.adapter.PostAdapter;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.common.MyHandle;
+import com.example.nuaabbs.util.LogUtil;
 
 public class HotPostFragment extends BaseFragment {
 
     private PostAdapter postAdapter;
     private SwipeRefreshLayout swipeRefresh;
     private RecyclerView recyclerView;
+    private boolean needUpdate = false;
 
     public HotPostFragment() {
         // Required empty public constructor
@@ -46,12 +49,26 @@ public class HotPostFragment extends BaseFragment {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                MyApplication.postListManager.refreshHotPostList(true);
+                MyApplication.postListManager.refreshHotPostList();
+            }
+        });
+
+        MyApplication.myHandle.setHotPostFragmentUpdateListener(new MyHandle.HandleListener() {
+            @Override
+            public void OnHandleMsg(int msgArg) {
+                LogUtil.d("begin handle hot update msg");
+                if(msgArg == MyHandle.SUCCESS){
+                    if(HotPostFragment.this.postAdapter != null)
+                        HotPostFragment.this.postAdapter.notifyDataSetChanged();
+                    closeRefreshBar(true);
+                }else{
+                    HotPostFragment.this.closeRefreshBar(false);
+                }
             }
         });
 
         if(MyApplication.postListManager.getHotPostList().isEmpty()){
-            MyApplication.postListManager.refreshHotPostList(true);
+            MyApplication.postListManager.refreshHotPostList();
             swipeRefresh.setRefreshing(true);
         }
 
@@ -62,17 +79,6 @@ public class HotPostFragment extends BaseFragment {
                 MyApplication.postListManager.getHotPostList(), true);
         recyclerView.setAdapter(postAdapter);
         return view;
-    }
-
-    @Override
-    public void DealRequestResult(boolean successFlag){
-        if(successFlag){
-            if(this.postAdapter != null)
-                this.postAdapter.notifyDataSetChanged();
-            closeRefreshBar(true);
-        }else{
-            closeRefreshBar(false);
-        }
     }
 
     public void closeRefreshBar(boolean showToast){

@@ -29,17 +29,20 @@ import com.example.nuaabbs.action.PersonalPageActivity;
 import com.example.nuaabbs.action.SearchActivity;
 import com.example.nuaabbs.action.SystemSettingActivity;
 import com.example.nuaabbs.adapter.MyPageFragmentAdapter;
-import com.example.nuaabbs.asyncNetTask.LogoutTask;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.common.MyHandle;
 import com.example.nuaabbs.common.PostListManager;
 import com.example.nuaabbs.fragment.BaseFragment;
 import com.example.nuaabbs.fragment.HotPostFragment;
 import com.example.nuaabbs.fragment.LifePostFragment;
 import com.example.nuaabbs.fragment.StudyPostFragment;
+import com.example.nuaabbs.object.CommonRequest;
+import com.example.nuaabbs.object.CommonResponse;
 import com.example.nuaabbs.object.ZoomOutPageTransformer;
 import com.example.nuaabbs.util.LogUtil;
+import com.example.nuaabbs.util.OkHttpUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,6 +128,7 @@ public class MainActivity extends BaseActivity
         });
 
         MyApplication.postListManager = new PostListManager();
+        MyApplication.myHandle = new MyHandle();
     }
 
     private void initData()
@@ -214,13 +218,10 @@ public class MainActivity extends BaseActivity
                 if(!MyApplication.loginState){
                     Toast.makeText(this,"你还没有登录！", Toast.LENGTH_SHORT).show();
                     break;
-                }
-                LogoutTask logoutTask = new LogoutTask(this);
-                logoutTask.execute();
+                }else executeLogoutTask();
                 break;
             default:
         }
-
         return true;
     }
 
@@ -267,10 +268,31 @@ public class MainActivity extends BaseActivity
         mFragmentList.get(position).SmoothRecycle(distance);
     }
 
-    public void DealRequestPostResult(int fragmentNum, boolean successFlag){
-        LogUtil.d("请求结果下发到达MainActivity fragment = "+fragmentNum);
+    private void executeLogoutTask(){
+        final OkHttpUtil okHttpUtil = OkHttpUtil.GetOkHttpUtil();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String param = "id=" + Integer.toString(MyApplication.userInfo.getId())
+                        + ":&:" + "userName=" + MyApplication.userInfo.getUserName();
+                CommonRequest commonRequest = new CommonRequest("", param, "");
+                okHttpUtil.executeTask(commonRequest, Constant.URL_Logout);
 
-        if(Constant.NullFragmentNum<fragmentNum && fragmentNum<Constant.StudyFragmentNum+1)
-            mFragmentList.get(fragmentNum-1).DealRequestResult(successFlag);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        CommonResponse response = okHttpUtil.getCommonResponse();
+                        String resCode = response.getResCode();
+                        if(resCode.equals(Constant.RESCODE_SUCCESS)){
+                            MyApplication.loginState = false;
+                            MyApplication.userInfo.initUserInfo();
+                            MyApplication.postListManager.ClearMyPostsWhenLogout();
+                            MainActivity.this.RefreshNavigationView();
+                            Toast.makeText( MainActivity.this, "下线成功！", Toast.LENGTH_SHORT).show();
+                        }else okHttpUtil.stdDealResult("LogoutTasks");
+                    }
+                });
+            }
+        }).start();
     }
 }

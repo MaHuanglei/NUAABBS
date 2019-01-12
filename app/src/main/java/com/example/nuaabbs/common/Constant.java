@@ -71,19 +71,4 @@ public class Constant {
     public static int CreatePostActivityNum = 12;
     public static int SearchActivityNum = 13;
     public static int SystemSettingActivityNum = 14;
-
-    // fragment num
-    public static int NullFragmentNum = 0;
-    public static int HotFragmentNum = 1;
-    public static int LifeFragmentNum = 2;
-    public static int StudyFragmentNum = 3;
-
-    public static int REQUEST_SUCCESS = 1;
-    public static int REQUEST_FAIL = 2;
-
-    public static int HotPostFragmentRequestTask = 1;
-    public static int LifePostFragmentRequestTask = 2;
-    public static int StudyPostFragmentRequestTask = 3;
-    public static int MyPostActivityRequestTask = 4;
-    public static int PersonalPageActivityRequestTask = 5;
 }

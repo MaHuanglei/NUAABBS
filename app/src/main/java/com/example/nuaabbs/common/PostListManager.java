@@ -1,5 +1,7 @@
 package com.example.nuaabbs.common;
 
+import android.os.Message;
+
 import com.example.nuaabbs.MainActivity;
 import com.example.nuaabbs.action.BaseActivity;
 import com.example.nuaabbs.action.MyPostActivity;
@@ -45,15 +47,9 @@ public class PostListManager {
         lifePostListChanged = false;
 
         requestPostLabel = "";
-
-        //refreshHotPostList(false);
-        //refreshLifePostList(false);
     }
 
-    public void refreshMyPostList(int requestPostTaskType){
-        final Integer taskType = new Integer(requestPostTaskType);
-        requestTask.add(taskType);
-
+    public void refreshMyPostList(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -69,9 +65,9 @@ public class PostListManager {
                     if(resCode.equals(Constant.RESCODE_SUCCESS)){
                         List<Post> newPostList = Constant.gson.fromJson(commonResponse.getResParam(),
                                 new TypeToken<List<Post>>(){}.getType());
-                        MyApplication.postListManager.DealRefreshMyPostList(newPostList, true, taskType);
+                        MyApplication.postListManager.DealRefreshMyPostList(newPostList, true);
                     }else {
-                        MyApplication.postListManager.DealRefreshMyPostList(null, false, taskType);
+                        MyApplication.postListManager.DealRefreshMyPostList(null, false);
                         okHttpUtil.stdDealResult("RequestMyPost");
                     }
                 }catch (Exception e){
@@ -81,10 +77,7 @@ public class PostListManager {
         }).start();
     }
 
-    public void refreshHotPostList(boolean fragmentRequest){
-        if(fragmentRequest)
-            requestTask.add(new Integer(Constant.HotPostFragmentRequestTask));
-
+    public void refreshHotPostList(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -110,17 +103,12 @@ public class PostListManager {
         }).start();
     }
 
-    public void refreshLifePostList(boolean fragmentRequest){
-        if(fragmentRequest)
-            requestTask.add(new Integer(Constant.LifePostFragmentRequestTask));
-
+    public void refreshLifePostList(){
         requestPostLabel = Constant.REQCODE_LIFE_Post;
         refreshLabelPostList();
     }
 
-    public void refreshStudyPostList(boolean fragmentRequest){
-        if(fragmentRequest)
-            requestTask.add(new Integer(Constant.StudyPostFragmentRequestTask));
+    public void refreshStudyPostList(){
 
         requestPostLabel = Constant.REQCODE_STUDY_Post;
         refreshLabelPostList();
@@ -132,8 +120,6 @@ public class PostListManager {
             @Override
             public void run() {
                 OkHttpUtil okHttpUtil = OkHttpUtil.GetOkHttpUtil();
-                int taskType = (requestPostLabel.equals(Constant.STUDY_LABEL))?
-                        Constant.StudyPostFragmentRequestTask:Constant.LifePostFragmentRequestTask;
                 try{
                     CommonRequest commonRequest = new CommonRequest();
                     commonRequest.setRequestCode(requestPostLabel);
@@ -144,9 +130,9 @@ public class PostListManager {
                     if(resCode.equals(Constant.RESCODE_SUCCESS)){
                         List<Post> newPostList = Constant.gson.fromJson(commonResponse.getResParam(),
                                 new TypeToken<List<Post>>(){}.getType());
-                        MyApplication.postListManager.DealRefreshLabelPostList(newPostList, true, taskType);
+                        MyApplication.postListManager.DealRefreshLabelPostList(newPostList, true);
                     }else {
-                        MyApplication.postListManager.DealRefreshLabelPostList(null, false, taskType);
+                        MyApplication.postListManager.DealRefreshLabelPostList(null, false);
                         okHttpUtil.stdDealResult("RequestLabelPost");
                     }
                 }catch (Exception e){
@@ -170,10 +156,13 @@ public class PostListManager {
             LogUtil.e("System Error","Request hot posts fail");
         }
 
-        SendRefreshResult(successFlag, Constant.HotPostFragmentRequestTask);
+        Message message = new Message();
+        message.what = MyHandle.HotPostListUpdate;
+        message.arg1 = (successFlag)?MyHandle.SUCCESS:MyHandle.FAIL;
+        MyApplication.myHandle.sendMessage(message);
     }
 
-    public void DealRefreshMyPostList(List<Post> newPosts, boolean successFlag, int taskType){
+    public void DealRefreshMyPostList(List<Post> newPosts, boolean successFlag){
         if(successFlag){
             this.myPostListChanged = true;
             //TODO
@@ -187,12 +176,15 @@ public class PostListManager {
             LogUtil.e("System Error","Request my posts fail");
         }
 
-        SendRefreshResult(successFlag, taskType);
+        Message message = new Message();
+        message.what = MyHandle.MyPostListUpdate;
+        message.arg1 = (successFlag)?MyHandle.SUCCESS:MyHandle.FAIL;
+        MyApplication.myHandle.sendMessage(message);
     }
 
-    public void DealRefreshLabelPostList(List<Post> newPosts, boolean successFlag, int taskType){
+    public void DealRefreshLabelPostList(List<Post> newPosts, boolean successFlag){
         if(successFlag){
-            if(taskType == Constant.LifePostFragmentRequestTask){
+            if(requestPostLabel.equals(Constant.LIFE_LABEL)){
                 this.lifePostListChanged = true;
                 //TODO
                 for(Post newPost : newPosts){
@@ -201,7 +193,7 @@ public class PostListManager {
                     deletePost(newPost.getPostID(), lifePostList);
                     InsertPostFromTime(newPost, lifePostList);
                 }
-            }else if(taskType == Constant.StudyPostFragmentRequestTask){
+            }else if(requestPostLabel.equals(Constant.STUDY_LABEL)){
                 this.studyPostListChanged = true;
                 //TODO
                 for(Post newPost : newPosts){
@@ -215,49 +207,12 @@ public class PostListManager {
             LogUtil.e("System Error","Request label posts fail");
         }
 
-        SendRefreshResult(successFlag, taskType);
-    }
-
-    private void SendRefreshResult(boolean successFlag, int taskType){
-        boolean passFlag = false;
-        for(Integer integer : requestTask){
-            if(integer.intValue() == taskType){
-                passFlag = true;
-                requestTask.remove(integer);
-                break;
-            }
-        }
-        if(!passFlag) return;
-
-        final boolean flag = successFlag;
-        final int taskNum = taskType;
-
-        ((BaseActivity)CommonCache.CurrentActivity.getActivityContext()).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(taskNum == Constant.MyPostActivityRequestTask){
-                    if(CommonCache.CurrentActivity.getActivityNum() == Constant.MyPostActivityNum)
-                        ((MyPostActivity)CommonCache.CurrentActivity.getActivityContext())
-                                .DealRequestResult(flag);
-                }else if(taskNum == Constant.PersonalPageActivityRequestTask){
-                    if(CommonCache.CurrentActivity.getActivityNum() == Constant.PersonalPageActivityNum)
-                        ((PersonalPageActivity)CommonCache.CurrentActivity.getActivityContext())
-                                .DealRequestResult(flag);
-                }else{
-                    int fragmentNum = 0;
-                    if(taskNum == Constant.HotPostFragmentRequestTask){
-                        fragmentNum = Constant.HotFragmentNum;
-                    }else if(taskNum == Constant.LifePostFragmentRequestTask){
-                        fragmentNum = Constant.LifeFragmentNum;
-                    }else if(taskNum == Constant.StudyPostFragmentRequestTask){
-                        fragmentNum = Constant.StudyFragmentNum;
-                    }
-                    if(fragmentNum != 0 && CommonCache.CurrentActivity.getActivityNum() == Constant.MainActivityNum)
-                        ((MainActivity)CommonCache.CurrentActivity.getActivityContext())
-                                .DealRequestPostResult(fragmentNum, flag);
-                }
-            }
-        });
+        Message message = new Message();
+        if(requestPostLabel.equals(Constant.LIFE_LABEL))
+            message.what = MyHandle.LifePostListUpdate;
+        else message.what = MyHandle.StudyPostListUpdate;
+        message.arg1 = (successFlag)?MyHandle.SUCCESS:MyHandle.FAIL;
+        MyApplication.myHandle.sendMessage(message);
     }
 
     public void AddNewCreatePost(Post newPost) {
@@ -350,14 +305,7 @@ public class PostListManager {
     public void ClearMyPostsWhenLogout(){
         myPostList.clear();
     }
-/*
-    public List<Post> getAllPosts() {
-        return allPosts;
-    }
-    public void setAllPosts(List<Post> allPosts) {
-        this.allPosts = allPosts;
-    }
-*/
+
     public List<Post> getMyPostList() {
         return myPostList;
     }

@@ -12,6 +12,7 @@ public class MyApplication extends Application {
     public static boolean loginState = false;
     public static UserInfo userInfo = new UserInfo();
     public static PostListManager postListManager;
+    public static MyHandle myHandle;
 
     @Override
     public void onCreate() {

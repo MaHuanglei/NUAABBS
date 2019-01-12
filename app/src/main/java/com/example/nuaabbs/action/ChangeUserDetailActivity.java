@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.text.InputType;
 import android.view.MenuItem;
@@ -15,11 +16,14 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.nuaabbs.R;
-import com.example.nuaabbs.asyncNetTask.UpdateUserDetailTask;
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
+import com.example.nuaabbs.common.MyHandle;
+import com.example.nuaabbs.object.CommonRequest;
+import com.example.nuaabbs.object.CommonResponse;
 import com.example.nuaabbs.util.LogUtil;
+import com.example.nuaabbs.util.OkHttpUtil;
 
 import java.sql.Date;
 
@@ -34,6 +38,9 @@ public class ChangeUserDetailActivity extends BaseActivity
     EditText idiograph;
     Date nowDate;
     DatePickerDialog datePickerDialog;
+
+    ProgressBar progressBar;
+    OkHttpUtil okHttpUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +61,10 @@ public class ChangeUserDetailActivity extends BaseActivity
         sex.setText(MyApplication.userInfo.getSex());
 
         birthday = findViewById(R.id.change_user_birthday);
-        nowDate = MyApplication.userInfo.getBirthday();
-        if(nowDate != null) birthday.setText(nowDate.toString());
+        if(MyApplication.userInfo.isBirthdayEffect()){
+            nowDate = new Date(MyApplication.userInfo.getBirthday().getTime());
+            birthday.setText(nowDate.toString());
+        }
 
         idiograph = findViewById(R.id.change_user_idiograph);
         idiograph.setText(MyApplication.userInfo.getIdioGraph());
@@ -66,6 +75,8 @@ public class ChangeUserDetailActivity extends BaseActivity
         birthday.setOnClickListener(this);
         birthday.setOnFocusChangeListener(this);
         birthday.setInputType(InputType.TYPE_NULL);
+
+        progressBar = findViewById(R.id.update_process_bar);
     }
 
     @Override
@@ -100,10 +111,7 @@ public class ChangeUserDetailActivity extends BaseActivity
                 if(!isChanged()){
                     Toast.makeText(this, "修改成功！", Toast.LENGTH_SHORT).show();
                     this.finish();
-                }
-                UpdateUserDetailTask updateUserDetailTask =
-                        new UpdateUserDetailTask(this, (ProgressBar) findViewById(R.id.update_process_bar));
-                updateUserDetailTask.execute(GetNewUserDetail());
+                }else executeUpdateUserDetailTask(GetNewUserDetail());
                 break;
             default:
         }
@@ -119,9 +127,7 @@ public class ChangeUserDetailActivity extends BaseActivity
     private void ShowDatePickerDialog(){
         Date tmpDate;
         if(nowDate != null) tmpDate = nowDate;
-        else tmpDate = MyApplication.userInfo.getBirthday();
-        if(tmpDate == null)
-            tmpDate = new Date(Constant.dataDefault);
+        else tmpDate = new Date(Constant.dataDefault);
 
         if(datePickerDialog == null){
             datePickerDialog = new DatePickerDialog(ChangeUserDetailActivity.this,
@@ -140,21 +146,6 @@ public class ChangeUserDetailActivity extends BaseActivity
         datePickerDialog.show();
     }
 
-    private String GetNewUserDetail(){
-        String newUserDetail = MyApplication.userInfo.getId()
-                + ":&:" + userName.getText().toString()
-                + ":&:" + schoolID.getText().toString()
-                + ":&:" + sex.getText().toString();
-        if(nowDate != null)
-            newUserDetail += ":&:" + nowDate.toString();
-        else newUserDetail += ":&:" + "null";
-
-        newUserDetail += ":&:" + idiograph.getText().toString();
-        LogUtil.d("changeUserDetail", newUserDetail);
-
-        return newUserDetail;
-    }
-
     private boolean isChanged(){
         if(!userName.getText().toString().equals(MyApplication.userInfo.getUserName()))
             return true;
@@ -170,12 +161,62 @@ public class ChangeUserDetailActivity extends BaseActivity
         return false;
     }
 
+    private String GetNewUserDetail(){
+        String newUserDetail = MyApplication.userInfo.getId()
+                + ":&:" + userName.getText().toString()
+                + ":&:" + schoolID.getText().toString()
+                + ":&:" + sex.getText().toString();
+        if(nowDate != null)
+            newUserDetail += ":&:" + nowDate.toString();
+        else newUserDetail += ":&:" + "null";
+
+        newUserDetail += ":&:" + idiograph.getText().toString();
+        LogUtil.d("changeUserDetail", newUserDetail);
+
+        return newUserDetail;
+    }
+
+    private void executeUpdateUserDetailTask(final String param){
+        progressBar.setVisibility(View.VISIBLE);
+        if(okHttpUtil == null)
+            okHttpUtil = OkHttpUtil.GetOkHttpUtil();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                CommonRequest commonRequest = new CommonRequest();
+                commonRequest.setParam1(param);
+                okHttpUtil.executeTask(commonRequest, Constant.URL_UpdateUserDetail);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        CommonResponse commonResponse = okHttpUtil.getCommonResponse();
+                        if(commonResponse.getResCode().equals(Constant.RESCODE_SUCCESS)){
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(ChangeUserDetailActivity.this, commonResponse.getResMsg(), Toast.LENGTH_SHORT).show();
+                            ChangeUserDetailActivity.this.UpdateSuccess();
+                        }else {
+                            progressBar.setVisibility(View.INVISIBLE);
+                            okHttpUtil.stdDealResult("UpdateUserDetailTask");
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
     public void UpdateSuccess(){
         MyApplication.userInfo.setUserName(userName.getText().toString());
         MyApplication.userInfo.setSchoolID(schoolID.getText().toString());
         MyApplication.userInfo.setSex(sex.getText().toString());
         MyApplication.userInfo.setBirthday(nowDate);
         MyApplication.userInfo.setIdioGraph(idiograph.getText().toString());
+
+        Message message = new Message();
+        message.what = MyHandle.UserInfoChanged;
+        message.arg1 = MyHandle.SUCCESS;
+        MyApplication.myHandle.sendMessage(message);
 
         this.finish();
     }
