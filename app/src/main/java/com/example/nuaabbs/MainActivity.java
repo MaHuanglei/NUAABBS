@@ -273,8 +273,8 @@ public class MainActivity extends BaseActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String param = "id=" + Integer.toString(MyApplication.userInfo.getId())
-                        + ":&:" + "userName=" + MyApplication.userInfo.getUserName();
+                String param = Integer.toString(MyApplication.userInfo.getId())
+                        + ":&:" + MyApplication.userInfo.getUserName();
                 CommonRequest commonRequest = new CommonRequest("", param, "");
                 okHttpUtil.executeTask(commonRequest, Constant.URL_Logout);
 

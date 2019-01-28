@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp">
 
-            <LinearLayout
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -34,45 +34,49 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_head_1"/>
 
-                <LinearLayout
-                    android:orientation="vertical"
+                <TextView
+                    android:id="@+id/post_sender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp">
+                    android:minWidth="50dp"
+                    app:layout_constraintLeft_toRightOf="@+id/post_head"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/textview_selector"
+                    android:textColor="@color/colorBlack"
+                    android:maxEms="8"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:textSize="16sp"/>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/post_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:textColor="@color/colorLightRed"
+                    app:layout_constraintLeft_toRightOf="@+id/post_sender"/>
 
-                        <TextView
-                            android:id="@+id/post_sender"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minWidth="50dp"
-                            android:background="@drawable/textview_selector"
-                            android:textColor="@color/colorBlack"
-                            android:maxEms="8"
-                            android:singleLine="true"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit="marquee_forever"
-                            android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/post_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    app:layout_constraintLeft_toRightOf="@+id/post_head"
+                    app:layout_constraintTop_toBottomOf="@+id/post_sender"
+                    android:layout_marginLeft="10dp"/>
 
-                        <TextView
-                            android:id="@+id/post_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:textColor="@color/colorLightRed"/>
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/post_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12sp"/>
-
-                </LinearLayout>
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/post_delete"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/ic_btn_delete"
+                    android:visibility="invisible"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:id="@+id/post_info"
@@ -87,7 +91,6 @@
                 android:textSize="16sp" />
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -102,7 +105,7 @@
                     android:id="@+id/view_num"
                     android:layout_width="30dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
+                    android:layout_gravity="center_vertical"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -116,7 +119,7 @@
                     android:id="@+id/thumb_up_num"
                     android:layout_width="30dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
+                    android:layout_gravity="center_vertical"
                     android:textSize="15sp"/>
 
                 <ImageView
@@ -130,7 +133,7 @@
                     android:id="@+id/comment_num"
                     android:layout_width="30dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
+                    android:layout_gravity="center_vertical"
                     android:textSize="15sp"/>
 
             </LinearLayout>

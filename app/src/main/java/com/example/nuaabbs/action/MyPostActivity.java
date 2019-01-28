@@ -64,7 +64,7 @@ public class MyPostActivity extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         myPostRecyclerView.setLayoutManager(layoutManager);
         adapter = new PostAdapter(this,
-                MyApplication.postListManager.getMyPostList(), true);
+                MyApplication.postListManager.getMyPostList(), true, true);
         myPostRecyclerView.setAdapter(adapter);
     }
 

@@ -24,6 +24,7 @@ public class Constant {
 
     public static String REQCODE_LIFE_Post = LIFE_LABEL;
     public static String REQCODE_STUDY_Post = STUDY_LABEL;
+    public static String REQCODE_DELETEPOST = "delete post";
     public static String REQCODE_VIEW = "add view num";
     public static String REQCODE_THUMBUP = "add thumb_up num";
     public static String REQCODE_COMMENT = "add comment";

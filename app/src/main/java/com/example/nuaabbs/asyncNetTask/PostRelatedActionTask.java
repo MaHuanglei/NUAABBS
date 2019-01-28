@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import com.example.nuaabbs.common.CommonCache;
 import com.example.nuaabbs.common.Constant;
+import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.object.CommonRequest;
 import com.example.nuaabbs.object.CommonResponse;
 import com.example.nuaabbs.util.OkHttpUtil;
@@ -24,6 +25,7 @@ public class PostRelatedActionTask extends AsyncTask<String, String, Boolean> {
             CommonRequest commonRequest = new CommonRequest();
             commonRequest.setRequestCode(params[0]);
             commonRequest.setParam1(params[1]);
+            commonRequest.setParam2(MyApplication.userInfo.getId()+":&:"+MyApplication.userInfo.getUserName());
             reqCode = params[0];
 
             commonResponse = okHttpUtil.executeTask(commonRequest, Constant.URL_PostRelatedAction);

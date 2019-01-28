@@ -57,7 +57,8 @@ public class PostListManager {
 
                 try{
                     CommonRequest commonRequest = new CommonRequest();
-                    commonRequest.setRequestCode(MyApplication.userInfo.getId()+"");
+                    commonRequest.setParam1(MyApplication.userInfo.getId()+"");
+                    commonRequest.setParam2(MyApplication.userInfo.getUserName());
 
                     CommonResponse commonResponse = okHttpUtil.executeTask(commonRequest, Constant.URL_RequestMyPost);
 
@@ -85,6 +86,11 @@ public class PostListManager {
                 OkHttpUtil okHttpUtil = OkHttpUtil.GetOkHttpUtil();
                 try{
                     CommonRequest commonRequest = new CommonRequest();
+                    if(MyApplication.loginState){
+
+                        commonRequest.setParam1(MyApplication.userInfo.getId()+"");
+                        commonRequest.setParam2(MyApplication.userInfo.getUserName());
+                    }
                     CommonResponse commonResponse = okHttpUtil.executeTask(commonRequest, Constant.URL_RequestHotPost);
 
                     String resCode = commonResponse.getResCode();
@@ -123,6 +129,11 @@ public class PostListManager {
                 try{
                     CommonRequest commonRequest = new CommonRequest();
                     commonRequest.setRequestCode(requestPostLabel);
+                    if(MyApplication.loginState){
+
+                        commonRequest.setParam1(MyApplication.userInfo.getId()+"");
+                        commonRequest.setParam2(MyApplication.userInfo.getUserName());
+                    }
 
                     CommonResponse commonResponse = okHttpUtil.executeTask(commonRequest, Constant.URL_RequestLabelPost);
 

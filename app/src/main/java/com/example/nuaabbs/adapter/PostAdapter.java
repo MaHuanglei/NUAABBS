@@ -1,19 +1,17 @@
 package com.example.nuaabbs.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.nuaabbs.R;
 import com.example.nuaabbs.action.PostContentActivity;
 import com.example.nuaabbs.asyncNetTask.PostRelatedActionTask;
@@ -22,7 +20,6 @@ import com.example.nuaabbs.common.Constant;
 import com.example.nuaabbs.common.MyApplication;
 import com.example.nuaabbs.object.Comment;
 import com.example.nuaabbs.object.Post;
-import com.example.nuaabbs.util.HelperUtil;
 import com.example.nuaabbs.util.LogUtil;
 import com.example.nuaabbs.util.PopUpEditWindow;
 
@@ -37,13 +34,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private Context mContext;
     private List<Post> postList;
     private boolean showLabel;
-
-    private int currentShowItemCount;
+    private boolean deletable;
 
     private PopUpEditWindow window;
-
-    public PostAdapter() {
-    }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         View postView;
@@ -51,6 +44,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         TextView sender;
         TextView time;
         TextView label;
+        ImageView deleteBtn;
         CircleImageView headPortrait;
         TextView postInfo;
 
@@ -75,6 +69,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             sender = view.findViewById(R.id.post_sender);
             time = view.findViewById(R.id.post_time);
             label = view.findViewById(R.id.post_label);
+            deleteBtn = view.findViewById(R.id.post_delete);
             postInfo = view.findViewById(R.id.post_info);
 
             views = view.findViewById(R.id.views);
@@ -97,9 +92,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         this.mContext = context;
         this.postList = postList;
         this.showLabel = showLabel;
+        this.deletable = false;
+    }
 
-        currentShowItemCount = this.postList.size();
-        //hasShowBottom = false;
+    public PostAdapter(Context context, List<Post> postList, boolean showLabel, boolean deletable) {
+        this.mContext = context;
+        this.postList = postList;
+        this.showLabel = showLabel;
+        this.deletable = deletable;
     }
 
     @Override
@@ -121,6 +121,36 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
 
+            }
+        });
+
+        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext)
+                        .setTitle("提示")//设置title
+                        .setMessage("是否确认删除该条帖子？")//设置要显示的message
+                        .setCancelable(true)//表示点击dialog其它部分不能取消(除了“取消”，“确定”按钮)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Toast.makeText(mContext, "点击了确定", Toast.LENGTH_SHORT).show();
+
+                                        int position = holder.getAdapterPosition();
+                                        int postId = postList.get(position).getPostID();
+                                        postList.remove(position);
+                                        PostAdapter.this.notifyDataSetChanged();
+
+                                        DealPostRelatedAction(Constant.REQCODE_DELETEPOST, postId+"");
+                                    }
+                                })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // dialogInterface.dismiss();
+                            }
+                        });
+                alertDialog.show();//别忘了show
             }
         });
 
@@ -210,6 +240,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.sender.setText(post.getPoster());
         holder.time.setText(post.getDateStr());
         if(showLabel) holder.label.setText(post.getLabel());
+        if(deletable) holder.deleteBtn.setVisibility(View.VISIBLE);
         holder.postInfo.setText(post.getPostContent());
 
         holder.viewNum.setText(post.getViewNum()+"");
